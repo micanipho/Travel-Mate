@@ -6,8 +6,8 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
-    --light: 34 100% 99%; /* #fffcf8 */
-    --primary-light: 355 100% 80%; /* #FF9E9E */
+    --primary: 0 0% 19%; /* #FF6B6B */
+    --primary-light: 0 0% 6%; /* #FF9E9E */
     --primary-dark: 355 100% 67%; /* #FF4757 */
     --secondary: 173 59% 55%; /* #4ECDC4 */
     --yellow: #333; /* #FFD166 */
@@ -32,6 +32,7 @@
     --input: 20 5.9% 90%;
     --ring: 355 100% 70%;
     --radius: 0.5rem;
+    --accent-color: 30 100% 50%;
   }
 
   .dark {
@@ -57,7 +58,7 @@
   }
 
   * {
-    @apply border-border;
+    @apply border-[hsl(var(--accent-color))];
   }
 
   body {
@@ -116,4 +117,7 @@
 
 .font-comic {
   font-family: 'Comic Neue', cursive;
+}
+button {
+  margin: 6px;
 }

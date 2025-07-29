@@ -8,19 +8,24 @@ const Login = () => {
     <section className="py-16 bg-orange-50 overflow-hidden relative ">
       <div className="flex items-center justify-center container p-10 mx-auto px-4">
         
-        <div className="flex items-center justify-center overflow-hidden w-[40vw] h-[80vh] p-2 md:p-2">
+        <div className="flex items-center justify-center overflow-hidden w-[40vw] h-[80vh]p-2 md:p-2">
           
           <div className="max-w-3xl mx-auto">
+            <h2 className="font-fredoka text-6xl mb-6 text-primary text-center">Sign Up</h2>
 
-                <h2 className="text-6xl mb-6 text-primary text-center">TravelMate</h2>
-                <h5 className="text-center p-4 text-gray-700 mb-4 text-lg">
-                    Browse Taxi Ranks, Routes and staying safe with real-time Alerts
-                </h5>
-                <h2 className="font-fredoka mb-6 text-3xl text-primary text-center">Log in</h2>
+                <p className="text-center p-4 text-gray-700 mb-4">
+                    Create a new account to get started! If you already have an account, you can 
+                    <a href="/signup" className="text-primary hover:underline"> sign in</a>.
+                </p>
+
                 <form className="space-y-4 p-2" method="POST" action="/dashboard">
                     <div>
+                        <label htmlFor="fullname" className="block text-1xl font-medium text-primary">Fullname</label>
+                        <input type="text" id="fullname" name="fullname" placeholder='John Doe' required className="mt-1 block w-full px-3 py-2 border border-primary/60 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                    </div>
+                    <div>
                         <label htmlFor="email" className="block text-1xl font-medium text-primary">Email</label>
-                        <input type="email" id="email" name="email" required className="mt-1 block w-full px-3 py-2 border border-primary/60 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                        <input type="email" id="email" name="email" placeholder='johndoe@example.com' required className="mt-1 block w-full px-3 py-2 border border-primary/60 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
                     </div>
                     <div>
                         <label htmlFor="password" className="block text-1xl font-medium text-primary">Password</label>
@@ -29,7 +34,7 @@ const Login = () => {
 
                     <div className="flex justify-center items-center w-full px-4 md:px-0">
 
-                      <button type="submit" className="w-[90%] bg-primary text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200 flex items-center justify-center"><span className="ml-2">Log In</span>
+                      <button type="submit" className="w-[90%] bg-primary text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200 flex items-center justify-center"><span className="ml-2">Sign Up</span>
                       </button>
                       
                       <hr/>
