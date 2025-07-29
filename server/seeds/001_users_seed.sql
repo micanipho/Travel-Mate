@@ -3,8 +3,8 @@
 
 -- Insert sample users (passwords are hashed for 'password123')
 INSERT INTO users (email, password_hash, first_name, last_name, notification_enabled, preferred_language) VALUES
-('john.doe@example.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.s5uIoO', 'John', 'Doe', true, 'en'),
-('jane.smith@example.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.s5uIoO', 'Jane', 'Smith', true, 'en'),
-('admin@travelmate.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.s5uIoO', 'Admin', 'User', true, 'en'),
-('test.user@example.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.s5uIoO', 'Test', 'User', false, 'af')
+('john.doe@example.com', '$2a$12$5gfCX9lNNw8WN/nxusTTFOnIeAwq8vr3Qc9fnIwJoCgrbSEt0IxXi', 'John', 'Doe', true, 'en'),
+('jane.smith@example.com', '$2a$12$5gfCX9lNNw8WN/nxusTTFOnIeAwq8vr3Qc9fnIwJoCgrbSEt0IxXi', 'Jane', 'Smith', true, 'en'),
+('admin@travelmate.com', '$2a$12$5gfCX9lNNw8WN/nxusTTFOnIeAwq8vr3Qc9fnIwJoCgrbSEt0IxXi', 'Admin', 'User', true, 'en'),
+('test.user@example.com', '$2a$12$5gfCX9lNNw8WN/nxusTTFOnIeAwq8vr3Qc9fnIwJoCgrbSEt0IxXi', 'Test', 'User', false, 'af')
 ON CONFLICT (email) DO NOTHING;
