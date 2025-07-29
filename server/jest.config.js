@@ -17,5 +17,15 @@ module.exports = {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
-  testTimeout: 10000
+  testTimeout: 10000,
+  // Handle async operations properly
+  detectOpenHandles: false, // Disable to reduce noise
+  forceExit: true,
+  // Clear mocks between tests
+  clearMocks: true,
+  restoreMocks: true,
+  // Prevent memory leaks
+  maxWorkers: 1,
+  // Force exit after tests
+  verbose: false
 };
