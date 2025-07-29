@@ -71,6 +71,10 @@ const Dashboard = () => {
   const [isAddDestinationOpen, setIsAddDestinationOpen] = useState(false);
   const [isAddAlertOpen, setIsAddAlertOpen] = useState(false);
 
+  // Alert filter states
+  const [alertStatusFilter, setAlertStatusFilter] = useState<'all' | 'read' | 'unread'>('all');
+  const [alertPriorityFilter, setAlertPriorityFilter] = useState<'all' | 'low' | 'medium' | 'high'>('all');
+
   // Form states
   const [newDestination, setNewDestination] = useState({
     location: '',
@@ -87,37 +91,76 @@ const Dashboard = () => {
 
   // Function definitions must come before useEffect hooks that use them
   const loadDashboardData = async () => {
+    console.log('Loading dashboard data...');
+
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.warn('Dashboard data loading timed out after 10 seconds');
+      setLoading(false);
+    }, 10000);
+
     try {
       setLoading(true);
 
       // Load destinations
+      console.log('Loading destinations...');
+      let loadedDestinations: Destination[] = [];
       try {
         const destinationsResponse = await apiRequest("GET", "/api/destinations");
         const destinationsData = await destinationsResponse.json();
-        setDestinations(destinationsData.destinations || destinationsData || []);
+        console.log('Destinations API response:', destinationsData);
+
+        if (destinationsData.success && destinationsData.data && destinationsData.data.destinations) {
+          loadedDestinations = destinationsData.data.destinations;
+          console.log('Loaded destinations:', loadedDestinations.length);
+        } else {
+          console.warn('Unexpected destinations API response structure:', destinationsData);
+          loadedDestinations = [];
+        }
+        setDestinations(loadedDestinations);
       } catch (error) {
-        console.log('Destinations endpoint not available yet, using empty array');
+        console.error('Error loading destinations:', error);
+        loadedDestinations = [];
         setDestinations([]);
       }
 
       // Load alerts
+      console.log('Loading alerts...');
+      let loadedAlerts: AlertItem[] = [];
       try {
-        const alertsResponse = await apiRequest("GET", "/api/alerts");
+        const alertsResponse = await apiRequest("GET", "/api/alerts?limit=20");
         const alertsData = await alertsResponse.json();
-        setAlerts(alertsData.alerts || alertsData || []);
+        console.log('Alerts API response:', alertsData);
+
+        if (alertsData.success && alertsData.data && alertsData.data.alerts) {
+          loadedAlerts = alertsData.data.alerts;
+          console.log('Loaded alerts:', loadedAlerts.length);
+        } else {
+          console.warn('Unexpected alerts API response structure:', alertsData);
+          loadedAlerts = [];
+        }
+        setAlerts(loadedAlerts);
       } catch (error) {
-        console.log('Alerts endpoint not available yet, using empty array');
+        console.error('Error loading alerts:', error);
+        loadedAlerts = [];
         setAlerts([]);
       }
 
-      // Calculate stats
-      const unreadCount = alerts.filter((alert: AlertItem) => alert.status === 'unread').length;
+      // Calculate stats after data is loaded
+      const unreadCount = loadedAlerts.filter((alert: AlertItem) => alert.status === 'unread').length;
+      console.log('Calculating stats:', {
+        loadedDestinations: loadedDestinations.length,
+        loadedAlerts: loadedAlerts.length,
+        unreadCount
+      });
+
       setStats({
-        totalDestinations: destinations.length,
+        totalDestinations: loadedDestinations.length,
         unreadAlerts: unreadCount,
         recentActivity: 1 // For now, just show account creation
       });
 
+      console.log('Dashboard data loaded successfully');
     } catch (error) {
       console.error('Error loading dashboard data:', error);
       // Don't show error toast for missing endpoints during development
@@ -125,6 +168,8 @@ const Dashboard = () => {
       setAlerts([]);
       setStats({ totalDestinations: 0, unreadAlerts: 0, recentActivity: 1 });
     } finally {
+      clearTimeout(timeoutId);
+      console.log('Setting loading to false');
       setLoading(false);
     }
   };
@@ -205,6 +250,71 @@ const Dashboard = () => {
       });
     }
   };
+
+  const handleMarkAsRead = async (alertId: number) => {
+    try {
+      const response = await apiRequest("PUT", `/api/alerts/${alertId}/read`);
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "Alert marked as read",
+        });
+        loadDashboardData(); // Reload data
+      } else {
+        throw new Error(data.message || 'Failed to mark alert as read');
+      }
+    } catch (error) {
+      console.error('Error marking alert as read:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to mark alert as read",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleMarkAsUnread = async (alertId: number) => {
+    try {
+      const response = await apiRequest("PUT", `/api/alerts/${alertId}/unread`);
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "Alert marked as unread",
+        });
+        loadDashboardData(); // Reload data
+      } else {
+        throw new Error(data.message || 'Failed to mark alert as unread');
+      }
+    } catch (error) {
+      console.error('Error marking alert as unread:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to mark alert as unread",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Filter alerts based on current filters
+  const filteredAlerts = alerts.filter((alert) => {
+    const statusMatch = alertStatusFilter === 'all' || alert.status === alertStatusFilter;
+    const priorityMatch = alertPriorityFilter === 'all' || alert.priority === alertPriorityFilter;
+    return statusMatch && priorityMatch;
+  });
+
+  // Debug logging
+  console.log('Filter Debug:', {
+    totalAlerts: alerts.length,
+    filteredAlerts: filteredAlerts.length,
+    statusFilter: alertStatusFilter,
+    priorityFilter: alertPriorityFilter,
+    alertPriorities: alerts.map(a => a.priority),
+    alertStatuses: alerts.map(a => a.status)
+  });
 
   // All useEffect hooks must be called before conditional returns
   // Redirect if not authenticated
@@ -391,30 +501,75 @@ const Dashboard = () => {
           <TabsContent value="alerts" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Recent Alerts</CardTitle>
-                <CardDescription>
-                  Stay updated with important notifications and alerts
-                </CardDescription>
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div>
+                    <CardTitle>Recent Alerts</CardTitle>
+                    <CardDescription>
+                      Stay updated with important notifications and alerts
+                    </CardDescription>
+                  </div>
+                  <div className="flex gap-2">
+                    <Select value={alertStatusFilter} onValueChange={(value: 'all' | 'read' | 'unread') => setAlertStatusFilter(value)}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="unread">Unread</SelectItem>
+                        <SelectItem value="read">Read</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={alertPriorityFilter} onValueChange={(value: 'all' | 'low' | 'medium' | 'high') => setAlertPriorityFilter(value)}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue placeholder="Priority" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Priority</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="low">Low</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
+                {alerts.length > 0 && (
+                  <div className="mb-4 text-sm text-gray-600">
+                    Showing {filteredAlerts.length} of {alerts.length} alerts
+                    {(alertStatusFilter !== 'all' || alertPriorityFilter !== 'all') && (
+                      <span className="ml-2">
+                        (filtered by {alertStatusFilter !== 'all' && `status: ${alertStatusFilter}`}
+                        {alertStatusFilter !== 'all' && alertPriorityFilter !== 'all' && ', '}
+                        {alertPriorityFilter !== 'all' && `priority: ${alertPriorityFilter}`})
+                      </span>
+                    )}
+                  </div>
+                )}
                 {loading ? (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
                     <p className="mt-2 text-gray-600">Loading alerts...</p>
                   </div>
-                ) : alerts.length === 0 ? (
+                ) : filteredAlerts.length === 0 ? (
                   <div className="text-center py-8">
                     <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No alerts yet</h3>
-                    <p className="text-gray-600 mb-4">You'll see important notifications here</p>
-                    <Button onClick={() => setIsAddAlertOpen(true)}>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Alert
-                    </Button>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      {alerts.length === 0 ? 'No alerts yet' : 'No alerts match your filters'}
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      {alerts.length === 0 ? "You'll see important notifications here" : 'Try adjusting your filter settings'}
+                    </p>
+                    {alerts.length === 0 && (
+                      <Button onClick={() => setIsAddAlertOpen(true)}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create Alert
+                      </Button>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {alerts.map((alert) => (
+                    {filteredAlerts.map((alert) => (
                       <Alert key={alert.id} className={`${alert.status === 'unread' ? 'border-blue-200 bg-blue-50' : ''}`}>
                         <div className="flex justify-between items-start">
                           <div className="flex-1">
@@ -439,14 +594,25 @@ const Dashboard = () => {
                             </p>
                           </div>
                           <div className="flex gap-2">
-                            {alert.status === 'unread' && (
-                              <Button variant="outline" size="sm">
+                            {alert.status === 'unread' ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleMarkAsRead(alert.id)}
+                                title="Mark as read"
+                              >
                                 <CheckCircle className="w-4 h-4" />
                               </Button>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleMarkAsUnread(alert.id)}
+                                title="Mark as unread"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
                             )}
-                            <Button variant="outline" size="sm">
-                              <Eye className="w-4 h-4" />
-                            </Button>
                           </div>
                         </div>
                       </Alert>
