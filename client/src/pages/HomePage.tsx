@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet";
-
+import Hero from "@/components/Hero";
 const HomePage = () => {
   return (
     <>
@@ -10,6 +10,7 @@ const HomePage = () => {
           content="IEnhancing urban mobility through community-driven taxi information and support."
         />
       </Helmet>
+      <Hero />
     
     </>
   );

@@ -272,7 +272,7 @@ const Dashboard = () => {
         />
       </Helmet>
 
-      <div className="container mx-auto px-4 pt-24 pb-8 space-y-8">
+      <div className="bg-orange-50 container mx-auto px-4 pt-24 pb-8 space-y-8">
         {/* Welcome Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
@@ -286,7 +286,7 @@ const Dashboard = () => {
           <div className="flex gap-2">
             <Dialog open={isAddDestinationOpen} onOpenChange={setIsAddDestinationOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="bg-orange-300">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Destination
                 </Button>
@@ -348,7 +348,7 @@ const Dashboard = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="destinations" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="bg-gray-100 grid w-full grid-cols-3">
             <TabsTrigger value="destinations">Destinations</TabsTrigger>
             <TabsTrigger value="alerts">Alerts</TabsTrigger>
             <TabsTrigger value="activity">Recent Activity</TabsTrigger>
