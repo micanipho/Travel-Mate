@@ -12,7 +12,7 @@ module.exports = {
     sourceType: 'module'
   },
   rules: {
-    'no-console': 'warn',
+    'no-console': 'off', // Allow console statements for logging in backend
     'no-unused-vars': 'error',
     'prefer-const': 'error',
     'no-var': 'error'
@@ -22,4 +22,4 @@ module.exports = {
     'coverage/',
     'uploads/'
   ]
-};
+}

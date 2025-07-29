@@ -183,8 +183,6 @@ class User {
     return null
   }
 
-
-
   // Clear reset token after successful password reset
   static async clearResetToken (userId) {
     const result = await query(

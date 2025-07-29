@@ -1,7 +1,7 @@
 {
-  "include": ["client/src/**/*", "server/**/*"],
+  "include": ["src/**/*"],
   "exclude": [
-    "../node_modules", "build", "dist", "**/*.test.ts"],
+    "node_modules", "build", "dist", "**/*.test.ts"],
   "compilerOptions": {
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
@@ -14,10 +14,10 @@
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
     "moduleResolution": "bundler",
-    "baseUrl": "..",
+    "baseUrl": ".",
     "types": ["node", "vite/client"],
     "paths": {
-      "@/*": ["./client/src/*"]
+      "@/*": ["./src/*"]
     }
   }
 }

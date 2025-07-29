@@ -148,12 +148,12 @@ const validatePasswordUpdate = [
   body('confirmPassword')
     .custom((value, { req }) => {
       if (value !== req.body.newPassword) {
-        throw new Error('Password confirmation does not match new password');
+        throw new Error('Password confirmation does not match new password')
       }
-      return true;
+      return true
     }),
   handleValidationErrors
-];
+]
 
 module.exports = {
   validateUserRegistration,
