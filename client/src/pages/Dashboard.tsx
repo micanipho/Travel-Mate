@@ -91,39 +91,76 @@ const Dashboard = () => {
 
   // Function definitions must come before useEffect hooks that use them
   const loadDashboardData = async () => {
+    console.log('Loading dashboard data...');
+
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.warn('Dashboard data loading timed out after 10 seconds');
+      setLoading(false);
+    }, 10000);
+
     try {
       setLoading(true);
 
       // Load destinations
+      console.log('Loading destinations...');
+      let loadedDestinations: Destination[] = [];
       try {
         const destinationsResponse = await apiRequest("GET", "/api/destinations");
         const destinationsData = await destinationsResponse.json();
-        setDestinations(destinationsData.destinations || destinationsData || []);
+        console.log('Destinations API response:', destinationsData);
+
+        if (destinationsData.success && destinationsData.data && destinationsData.data.destinations) {
+          loadedDestinations = destinationsData.data.destinations;
+          console.log('Loaded destinations:', loadedDestinations.length);
+        } else {
+          console.warn('Unexpected destinations API response structure:', destinationsData);
+          loadedDestinations = [];
+        }
+        setDestinations(loadedDestinations);
       } catch (error) {
-        console.log('Destinations endpoint not available yet, using empty array');
+        console.error('Error loading destinations:', error);
+        loadedDestinations = [];
         setDestinations([]);
       }
 
       // Load alerts
+      console.log('Loading alerts...');
       let loadedAlerts: AlertItem[] = [];
       try {
-        const alertsResponse = await apiRequest("GET", "/api/alerts");
+        const alertsResponse = await apiRequest("GET", "/api/alerts?limit=20");
         const alertsData = await alertsResponse.json();
-        loadedAlerts = alertsData.data?.alerts || alertsData.alerts || alertsData.data || [];
+        console.log('Alerts API response:', alertsData);
+
+        if (alertsData.success && alertsData.data && alertsData.data.alerts) {
+          loadedAlerts = alertsData.data.alerts;
+          console.log('Loaded alerts:', loadedAlerts.length);
+        } else {
+          console.warn('Unexpected alerts API response structure:', alertsData);
+          loadedAlerts = [];
+        }
         setAlerts(loadedAlerts);
       } catch (error) {
-        console.log('Alerts endpoint not available yet, using empty array');
+        console.error('Error loading alerts:', error);
+        loadedAlerts = [];
         setAlerts([]);
       }
 
       // Calculate stats after data is loaded
       const unreadCount = loadedAlerts.filter((alert: AlertItem) => alert.status === 'unread').length;
+      console.log('Calculating stats:', {
+        loadedDestinations: loadedDestinations.length,
+        loadedAlerts: loadedAlerts.length,
+        unreadCount
+      });
+
       setStats({
-        totalDestinations: destinations.length,
+        totalDestinations: loadedDestinations.length,
         unreadAlerts: unreadCount,
         recentActivity: 1 // For now, just show account creation
       });
 
+      console.log('Dashboard data loaded successfully');
     } catch (error) {
       console.error('Error loading dashboard data:', error);
       // Don't show error toast for missing endpoints during development
@@ -131,6 +168,8 @@ const Dashboard = () => {
       setAlerts([]);
       setStats({ totalDestinations: 0, unreadAlerts: 0, recentActivity: 1 });
     } finally {
+      clearTimeout(timeoutId);
+      console.log('Setting loading to false');
       setLoading(false);
     }
   };
@@ -265,6 +304,16 @@ const Dashboard = () => {
     const statusMatch = alertStatusFilter === 'all' || alert.status === alertStatusFilter;
     const priorityMatch = alertPriorityFilter === 'all' || alert.priority === alertPriorityFilter;
     return statusMatch && priorityMatch;
+  });
+
+  // Debug logging
+  console.log('Filter Debug:', {
+    totalAlerts: alerts.length,
+    filteredAlerts: filteredAlerts.length,
+    statusFilter: alertStatusFilter,
+    priorityFilter: alertPriorityFilter,
+    alertPriorities: alerts.map(a => a.priority),
+    alertStatuses: alerts.map(a => a.status)
   });
 
   // All useEffect hooks must be called before conditional returns

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testDestinations()">Test Destinations</button>
+    <button onclick="testAlerts()">Test Alerts</button>
+    <div id="output"></div>
+
+    <script>
+        let token = '';
+        
+        function log(message) {
+            document.getElementById('output').innerHTML += '<p>' + JSON.stringify(message) + '</p>';
+        }
+        
+        async function testLogin() {
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'john.doe@example.com',
+                        password: 'password123'
+                    })
+                });
+                
+                const data = await response.json();
+                log('Login response: ' + JSON.stringify(data));
+                
+                if (data.success && data.token) {
+                    token = data.token;
+                    log('Token saved: ' + token.substring(0, 20) + '...');
+                }
+            } catch (error) {
+                log('Login error: ' + error.message);
+            }
+        }
+        
+        async function testDestinations() {
+            if (!token) {
+                log('Please login first');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/destinations', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                
+                const data = await response.json();
+                log('Destinations response: ' + JSON.stringify(data));
+            } catch (error) {
+                log('Destinations error: ' + error.message);
+            }
+        }
+        
+        async function testAlerts() {
+            if (!token) {
+                log('Please login first');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/alerts', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                
+                const data = await response.json();
+                log('Alerts response: ' + JSON.stringify(data));
+            } catch (error) {
+                log('Alerts error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

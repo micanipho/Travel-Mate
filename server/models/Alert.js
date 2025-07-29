@@ -31,35 +31,39 @@ class Alert {
   static async findByUserId (userId, page = 1, limit = 10, filters = {}) {
     const offset = (page - 1) * limit
     let whereClause = 'WHERE user_id = $1'
-    const params = [userId, limit, offset]
-    let paramCount = 4
+    const params = [userId]
+    let paramCount = 2
 
     // Add filters
     if (filters.status) {
       whereClause += ` AND status = $${paramCount}`
-      params.splice(-2, 0, filters.status)
+      params.push(filters.status)
       paramCount++
     }
 
     if (filters.priority) {
       whereClause += ` AND priority = $${paramCount}`
-      params.splice(-2, 0, filters.priority)
+      params.push(filters.priority)
       paramCount++
     }
+
+    // Add limit and offset at the end
+    const queryParams = [...params, limit, offset]
+    const limitParam = paramCount
+    const offsetParam = paramCount + 1
 
     const result = await query(
       `SELECT * FROM alerts
        ${whereClause}
        ORDER BY created_at DESC
-       LIMIT $${paramCount - 1} OFFSET $${paramCount}`,
-      params
+       LIMIT $${limitParam} OFFSET $${offsetParam}`,
+      queryParams
     )
 
     // Count query for pagination
-    const countParams = params.slice(0, -2) // Remove limit and offset
     const countResult = await query(
       `SELECT COUNT(*) FROM alerts ${whereClause}`,
-      countParams
+      params
     )
     const total = parseInt(countResult.rows[0].count)
 
