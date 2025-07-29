@@ -12,6 +12,7 @@ class AuthController {
     const existingUser = await User.findByEmail(email)
     if (existingUser) {
       return res.status(409).json({
+        success: false,
         error: 'User already exists',
         message: 'An account with this email already exists'
       })
@@ -31,6 +32,7 @@ class AuthController {
     const token = generateToken(user.id)
 
     res.status(201).json({
+      success: true,
       message: 'User registered successfully',
       user: {
         id: user.id,
@@ -52,6 +54,7 @@ class AuthController {
     const user = await User.findByEmail(email)
     if (!user) {
       return res.status(401).json({
+        success: false,
         error: 'Authentication failed',
         message: 'Invalid email or password'
       })
@@ -61,6 +64,7 @@ class AuthController {
     const isPasswordValid = await User.verifyPassword(password, user.password_hash)
     if (!isPasswordValid) {
       return res.status(401).json({
+        success: false,
         error: 'Authentication failed',
         message: 'Invalid email or password'
       })
@@ -70,6 +74,7 @@ class AuthController {
     const token = generateToken(user.id)
 
     res.json({
+      success: true,
       message: 'Login successful',
       user: {
         id: user.id,
