@@ -1,16 +1,16 @@
-const { body, param, query, validationResult } = require('express-validator');
+const { body, param, query, validationResult } = require('express-validator')
 
 // Handle validation errors
 const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
+  const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json({
       error: 'Validation failed',
       details: errors.array()
-    });
+    })
   }
-  next();
-};
+  next()
+}
 
 // User registration validation
 const validateUserRegistration = [
@@ -32,7 +32,7 @@ const validateUserRegistration = [
     .isLength({ min: 2, max: 50 })
     .withMessage('Last name must be between 2 and 50 characters'),
   handleValidationErrors
-];
+]
 
 // User login validation
 const validateUserLogin = [
@@ -44,7 +44,7 @@ const validateUserLogin = [
     .notEmpty()
     .withMessage('Password is required'),
   handleValidationErrors
-];
+]
 
 // Profile update validation
 const validateProfileUpdate = [
@@ -72,7 +72,7 @@ const validateProfileUpdate = [
     .isIn(['en', 'af', 'zu', 'xh'])
     .withMessage('Preferred language must be one of: en, af, zu, xh'),
   handleValidationErrors
-];
+]
 
 // Destination validation
 const validateDestination = [
@@ -92,7 +92,7 @@ const validateDestination = [
     .isFloat({ min: -180, max: 180 })
     .withMessage('Longitude must be a valid coordinate between -180 and 180'),
   handleValidationErrors
-];
+]
 
 // Alert validation
 const validateAlert = [
@@ -110,7 +110,7 @@ const validateAlert = [
     .isIn(['low', 'medium', 'high'])
     .withMessage('Priority must be one of: low, medium, high'),
   handleValidationErrors
-];
+]
 
 // ID parameter validation
 const validateId = [
@@ -118,7 +118,7 @@ const validateId = [
     .isInt({ min: 1 })
     .withMessage('ID must be a positive integer'),
   handleValidationErrors
-];
+]
 
 // Pagination validation
 const validatePagination = [
@@ -131,7 +131,7 @@ const validatePagination = [
     .isInt({ min: 1, max: 100 })
     .withMessage('Limit must be between 1 and 100'),
   handleValidationErrors
-];
+]
 
 // Password update validation
 const validatePasswordUpdate = [
@@ -163,4 +163,4 @@ module.exports = {
   validateId,
   validatePagination,
   handleValidationErrors
-};
+}
