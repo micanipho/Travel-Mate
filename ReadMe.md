@@ -65,6 +65,136 @@ Our community-driven approach leverages user-generated data to provide:
 - PostgreSQL (v12 or higher)
 - Git
 
+### PostgreSQL Installation
+
+#### Ubuntu/Debian Systems
+
+1. **Update package list**
+```bash
+sudo apt update
+```
+
+2. **Install PostgreSQL and additional utilities**
+```bash
+sudo apt install postgresql postgresql-contrib -y
+```
+
+3. **Start and enable PostgreSQL service**
+```bash
+# Start the service
+sudo systemctl start postgresql
+
+# Enable auto-start on boot
+sudo systemctl enable postgresql
+```
+
+4. **Verify installation**
+```bash
+# Check service status
+sudo systemctl status postgresql
+
+# Check PostgreSQL version
+psql --version
+
+# Test database connection
+sudo -u postgres psql -c "SELECT version();"
+```
+
+#### macOS Systems
+
+1. **Using Homebrew (recommended)**
+```bash
+# Install Homebrew if not already installed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install PostgreSQL
+brew install postgresql@16
+
+# Start PostgreSQL service
+brew services start postgresql@16
+```
+
+2. **Using PostgreSQL.app**
+- Download from [PostgreSQL.app](https://postgresapp.com/)
+- Install and launch the application
+- Add PostgreSQL to your PATH in `~/.zshrc` or `~/.bash_profile`:
+```bash
+export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
+```
+
+#### Windows Systems
+
+1. **Download PostgreSQL installer**
+- Visit [PostgreSQL Downloads](https://www.postgresql.org/download/windows/)
+- Download the installer for your Windows version
+
+2. **Run the installer**
+- Follow the installation wizard
+- Remember the password you set for the `postgres` user
+- Default port is 5432 (keep this unless you have conflicts)
+
+3. **Verify installation**
+- Open Command Prompt or PowerShell
+- Run: `psql --version`
+
+#### Post-Installation Setup
+
+1. **Create a database user for development**
+```bash
+# Switch to postgres user and create a new user
+sudo -u postgres createuser --interactive --pwprompt your_username
+
+# Or create user with specific privileges
+sudo -u postgres psql -c "CREATE USER your_username WITH PASSWORD 'your_password' CREATEDB;"
+```
+
+2. **Create the project database**
+```bash
+# Create database for the project
+sudo -u postgres createdb travel_mate_db
+
+# Or create with specific owner
+sudo -u postgres createdb -O your_username travel_mate_db
+```
+
+3. **Set up authentication (Ubuntu/Debian)**
+```bash
+# Edit PostgreSQL configuration (optional)
+sudo nano /etc/postgresql/16/main/pg_hba.conf
+
+# Change authentication method if needed (for development)
+# Find the line: local   all             all                                     peer
+# Change to:     local   all             all                                     md5
+```
+
+4. **Restart PostgreSQL after configuration changes**
+```bash
+sudo systemctl restart postgresql
+```
+
+#### Troubleshooting
+
+**Connection Issues:**
+```bash
+# Check if PostgreSQL is running
+sudo systemctl status postgresql
+
+# Check PostgreSQL logs
+sudo tail -f /var/log/postgresql/postgresql-16-main.log
+
+# Test connection with specific user
+psql -U your_username -h localhost -d travel_mate_db
+```
+
+**Permission Issues:**
+```bash
+# Reset postgres user password
+sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'new_password';"
+
+# Grant privileges to your user
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE travel_mate_db TO your_username;"
+```
+
 ### Installation
 
 1. Clone the repository
@@ -85,9 +215,15 @@ npm install
 ```
 
 3. Database Setup
+
+**Note:** Make sure PostgreSQL is installed and running (see [PostgreSQL Installation](#postgresql-installation) section above).
+
 ```bash
-# Create PostgreSQL database
-createdb sa_taxi_tracker
+# Create PostgreSQL database (if not created during PostgreSQL setup)
+createdb travel_mate_db
+
+# Or using psql
+psql -U postgres -c "CREATE DATABASE travel_mate_db;"
 
 # Run database migrations
 npm run migrate
@@ -102,9 +238,12 @@ npm run seed
 cp .env.example .env
 
 # Configure your PostgreSQL connection
-DATABASE_URL=postgresql://username:password@localhost:5432/sa_taxi_tracker
+DATABASE_URL=postgresql://username:password@localhost:5432/travel_mate_db
 JWT_SECRET=your_jwt_secret_here
 PORT=3000
+
+# Example with default postgres user:
+# DATABASE_URL=postgresql://postgres:your_password@localhost:5432/travel_mate_db
 ```
 
 5. Start the application
