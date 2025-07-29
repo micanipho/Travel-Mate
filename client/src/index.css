@@ -32,6 +32,7 @@
     --input: 20 5.9% 90%;
     --ring: 355 100% 70%;
     --radius: 0.5rem;
+    --accent-color: 30 100% 50%;
   }
 
   .dark {
@@ -57,7 +58,7 @@
   }
 
   * {
-    @apply border-border;
+    @apply border-[hsl(var(--accent-color))];
   }
 
   body {

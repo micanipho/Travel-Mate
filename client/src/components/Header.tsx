@@ -56,6 +56,11 @@ const Header = () => {
               SignUp
             </Button>
           </Link>
+          <Link href="/profile">
+            <Button className="bg-primary text-white font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 duration-300">
+              Profile
+            </Button>
+          </Link>
           
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
