@@ -2,6 +2,8 @@
 
 **Enhancing urban mobility through community-driven taxi information and support**
 
+> **Development Status**: This project is currently in active development. The backend API is fully functional with authentication, user management, alerts, and destinations features. The frontend is being built with React and TypeScript.
+
 ## Overview
 
 SA Taxi Tracker is a community-driven mobile application designed to improve the taxi commuting experience in South Africa by providing real-time information, route tracking, and community-based data sharing. The platform addresses common challenges faced by taxi commuters including unreliable schedules, lack of real-time updates, and difficulty finding available taxis.
@@ -50,18 +52,56 @@ Our community-driven approach leverages user-generated data to provide:
 
 ## Technology Stack
 
-- **Frontend**: React.js
-- **Backend**: Node.js with Express
-- **Database**: PostgreSQL
-- **Authentication**: JWT/OAuth/Sessions
-- **Testing**: Jest, Cypress, Supertest
+### Frontend
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **UI Components**: Radix UI primitives
+- **Styling**: Tailwind CSS
+- **State Management**: TanStack Query (React Query)
+- **Routing**: Wouter
+- **Forms**: React Hook Form with Zod validation
+
+### Backend
+- **Runtime**: Node.js (v22+)
+- **Framework**: Express.js
+- **Database**: PostgreSQL with raw SQL queries
+- **Authentication**: JWT with bcryptjs
+- **Validation**: Express Validator
+- **Security**: Helmet, CORS, Rate Limiting
+- **Testing**: Jest, Supertest
+
+## Quick Start
+
+For developers who want to get up and running quickly:
+
+```bash
+# 1. Clone and install
+git clone https://github.com/your-org/travel-mate.git
+cd travel-mate
+npm install
+cd server && npm install && cd ..
+
+# 2. Set up database (PostgreSQL must be installed)
+createdb travel_mate_db
+cd server
+cp .env.example .env
+# Edit .env with your database credentials
+npm run db:migrate
+npm run db:seed
+
+# 3. Start development servers
+cd ..
+npm run dev:all
+```
+
+Visit `http://localhost:5173` for the frontend and `http://localhost:3000/api/health` to verify the backend.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- npm or yarn
+- Node.js (v22 or higher)
+- npm (v10 or higher)
 - PostgreSQL (v12 or higher)
 - Git
 
@@ -199,19 +239,19 @@ sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE travel_mate_db TO you
 
 1. Clone the repository
 ```bash
-git clone https://github.com/your-org/sa-taxi-tracker.git
-cd sa-taxi-tracker
+git clone https://github.com/your-org/travel-mate.git
+cd travel-mate
 ```
 
 2. Install dependencies
 ```bash
-# Install backend dependencies
-cd server
+# Install all dependencies (both frontend and backend)
 npm install
 
-# Install frontend dependencies
-cd ../client
+# Install backend-specific dependencies
+cd server
 npm install
+cd ..
 ```
 
 3. Database Setup
@@ -225,22 +265,27 @@ createdb travel_mate_db
 # Or using psql
 psql -U postgres -c "CREATE DATABASE travel_mate_db;"
 
+# Navigate to server directory for database operations
+cd server
+
 # Run database migrations
-npm run migrate
+npm run db:migrate
 
 # Seed with sample data
-npm run seed
+npm run db:seed
 ```
 
 4. Environment Setup
 ```bash
-# Copy environment template
+# Create environment file in server directory
+cd server
 cp .env.example .env
 
-# Configure your PostgreSQL connection
+# Configure your PostgreSQL connection in server/.env
 DATABASE_URL=postgresql://username:password@localhost:5432/travel_mate_db
 JWT_SECRET=your_jwt_secret_here
 PORT=3000
+NODE_ENV=development
 
 # Example with default postgres user:
 # DATABASE_URL=postgresql://postgres:your_password@localhost:5432/travel_mate_db
@@ -248,11 +293,15 @@ PORT=3000
 
 5. Start the application
 ```bash
-# Start backend server (from server directory)
+# Start both frontend and backend (from root directory)
+npm run dev:all
+
+# Or start them separately:
+# Start frontend only
 npm run dev
 
-# Start frontend application (from client directory)
-npm start
+# Start backend only (from server directory)
+cd server && npm run dev
 ```
 
 ## Database Schema
@@ -325,62 +374,116 @@ server/
 client/
 ├── src/
 │   ├── components/   # Reusable UI components
+│   │   ├── ui/      # Radix UI component wrappers
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   └── Hero.tsx
 │   ├── pages/       # Main application pages
-│   ├── services/    # API integration
-│   ├── utils/       # Helper functions
-│   └── tests/       # Component tests
+│   │   ├── HomePage.tsx
+│   │   ├── LoginPage.tsx
+│   │   ├── SignUpPage.tsx
+│   │   ├── Dashboard.tsx
+│   │   └── ProfilePage.tsx
+│   ├── contexts/    # React contexts
+│   │   └── AuthContext.tsx
+│   ├── hooks/       # Custom React hooks
+│   ├── lib/         # Utilities and API client
+│   │   ├── api.ts
+│   │   ├── utils.ts
+│   │   └── queryClient.ts
+│   └── main.tsx     # Application entry point
+├── index.html
+├── vite.config.ts
+└── tailwind.config.ts
 ```
 
-## Core Features Implementation
+## Current Implementation Status
 
-### Authentication & Authorization
-- JWT-based authentication system
-- Protected routes for authenticated users
-- Role-based access control for moderation features
+### ✅ Completed Features
 
-### Database Integration
-- PostgreSQL database with proper schema design
-- Connection pooling using pg-pool for optimal performance
-- Health-check endpoint: `GET /api/health`
-- Migrations and seeding scripts for easy setup
+#### Authentication & Authorization
+- JWT-based authentication system with bcryptjs password hashing
+- User registration and login endpoints
+- Protected routes with middleware authentication
+- Token verification and refresh functionality
 
-### Required Features
+#### User Profile Management
+- **Endpoints**: `/api/users/profile`, `/api/users/password`
+- **Features**: View/edit name, email, notification settings, preferred language
+- **Security**: Password change with current password verification
+- **Database**: Full persistence with validation and unique email constraints
 
-#### 1. User Profile & Preferences
-- **Endpoint**: `/api/profile`
-- **Features**: View/edit name, email, password, notification settings, preferred routes
-- **Database**: Full persistence with validation
+#### Alerts/Notifications System
+- **Endpoints**: `/api/alerts/*` (8 endpoints total)
+- **Features**:
+  - Create, read, update, delete alerts
+  - Mark alerts as read/unread (individual and bulk)
+  - Get unread count for dashboard badges
+  - Pagination support for large alert lists
+- **Database**: Alert records with timestamp, title, message, status, and priority
 
-#### 2. Alerts/Notifications Dashboard
-- **Endpoint**: `/api/alerts`
-- **Features**: Real-time alerts for route disruptions, taxi availability, schedule changes
-- **Database**: Alert records with timestamp, title, status, and priority
-
-#### 3. Monitored Destinations CRUD
-- **Endpoint**: `/api/destinations`
-- **Entity**: MonitoredDestination
-- **Fields**: 
+#### Monitored Destinations CRUD
+- **Endpoints**: `/api/destinations/*` (5 endpoints total)
+- **Entity**: MonitoredDestination with full CRUD operations
+- **Fields**:
   - `id`: Unique identifier
   - `location`: Destination name/address
-  - `riskLevel`: Safety/reliability rating
-  - `lastChecked`: Last update timestamp
-- **Operations**: Full Create, Read, Update, Delete functionality
+  - `risk_level`: Safety/reliability rating (1-5 scale)
+  - `last_checked`: Last update timestamp
+  - `latitude/longitude`: GPS coordinates
+- **Security**: Users can only manage their own destinations
+
+#### Database Integration
+- PostgreSQL database with proper schema design
+- Raw SQL queries for optimal performance
+- Health-check endpoint: `GET /api/health`
+- Complete migrations and seeding scripts
+- Three core tables: users, alerts, monitored_destinations
+
+#### Security & Middleware
+- Helmet for security headers
+- CORS configuration
+- Rate limiting (100 requests per 15 minutes)
+- Input validation with express-validator
+- Comprehensive error handling middleware
+- Request logging with Morgan
+
+### 🚧 In Development
+
+#### Frontend Implementation
+- React 18 with TypeScript and Vite
+- Radix UI components with Tailwind CSS
+- Authentication context and protected routes
+- Basic pages: Home, Login, Signup, Dashboard, Profile
+- API integration with TanStack Query
+
+### 📋 Planned Features
+- Real-time notifications with WebSocket
+- Interactive mapping with route visualization
+- Community feedback and validation system
+- Mobile-responsive design improvements
+- Advanced search and filtering
+- Data analytics dashboard
 
 ## API Documentation
 
 ### Authentication Endpoints
 ```
-POST /api/auth/login     # User login
 POST /api/auth/register  # User registration
+POST /api/auth/login     # User login
 POST /api/auth/logout    # User logout
 GET  /api/auth/verify    # Token verification
+POST /api/auth/refresh   # Refresh token
 ```
 
 ### User Management
 ```
-GET    /api/profile      # Get user profile
-PUT    /api/profile      # Update user profile
-GET    /api/users        # List users (admin)
+GET    /api/users/profile      # Get user profile
+PUT    /api/users/profile      # Update user profile
+PUT    /api/users/password     # Update password
+GET    /api/users              # List users (admin)
+GET    /api/users/:id          # Get user by ID (admin)
+DELETE /api/users/:id          # Delete user (admin)
 ```
 
 ### Destinations Management
@@ -394,36 +497,98 @@ DELETE /api/destinations/:id       # Delete destination
 
 ### Alerts System
 ```
-GET    /api/alerts                 # Get user alerts
+GET    /api/alerts                 # Get user alerts (with pagination)
 POST   /api/alerts                 # Create new alert
+GET    /api/alerts/unread-count    # Get unread alerts count
+PUT    /api/alerts/mark-all-read   # Mark all alerts as read
+GET    /api/alerts/:id             # Get specific alert
 PUT    /api/alerts/:id/read        # Mark alert as read
+PUT    /api/alerts/:id/unread      # Mark alert as unread
 DELETE /api/alerts/:id             # Delete alert
 ```
 
-### Database Commands
+### System Health
 ```
+GET    /api/health                 # Health check endpoint
+```
+
+### Database Commands
+```bash
+# Navigate to server directory first
+cd server
+
 # Database operations
 npm run db:create     # Create database
 npm run db:migrate    # Run migrations
 npm run db:rollback   # Rollback last migration
 npm run db:seed       # Seed sample data
-npm run db:reset      # Reset database (drop + recreate + migrate + seed)
+npm run db:reset      # Reset database (create + migrate + seed)
+```
+
+### Development Commands
+```bash
+# Frontend development (from root)
+npm run dev           # Start Vite dev server
+npm run build         # Build for production
+
+# Backend development (from server directory)
+npm run dev           # Start with nodemon
+npm run start         # Start production server
+
+# Full stack development (from root)
+npm run dev:all       # Start both frontend and backend
+```
+
+## Deployment
+
+### Production Build
+```bash
+# Build the application
+npm run build
+
+# Start production server
+npm start
+```
+
+### Environment Variables
+Required environment variables for production:
+
+**Server (.env in server directory):**
+```
+NODE_ENV=production
+DATABASE_URL=postgresql://user:password@host:port/database
+JWT_SECRET=your-super-secure-jwt-secret
+PORT=3000
+```
+
+### Docker Support
+```bash
+# Build and run with Docker (if Dockerfile is available)
+docker build -t travel-mate .
+docker run -p 3000:3000 -p 5173:5173 travel-mate
 ```
 
 ## Testing
 
 ### Running Tests
 ```bash
+# Navigate to server directory for backend tests
+cd server
+
 # Run all tests
 npm test
 
 # Run specific test suites
-npm run test:unit      # Unit tests
+npm run test:unit         # Unit tests
 npm run test:integration  # Integration tests
-npm run test:e2e       # End-to-end tests
+npm run test:e2e         # End-to-end tests
 
 # Run tests with coverage
 npm run test:coverage
+
+# Lint code
+npm run lint
+npm run lint:fix
 ```
 
 ### Test Coverage
@@ -464,15 +629,25 @@ For detailed development phases, implementation timelines, and deliverables, see
 
 ## Contributing
 
-We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+We welcome contributions from the community!
 
 ### Development Setup
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
+2. Follow the [Quick Start](#quick-start) guide
+3. Create a feature branch: `git checkout -b feature/your-feature-name`
+4. Make your changes
+5. Add tests for new functionality (backend tests in `server/tests/`)
+6. Ensure all tests pass: `cd server && npm test`
+7. Ensure code follows style guidelines: `npm run lint`
+8. Commit your changes: `git commit -m "Add your feature"`
+9. Push to your fork: `git push origin feature/your-feature-name`
+10. Submit a pull request
+
+### Code Style
+- Backend: Follow ESLint configuration in `server/.eslintrc.js`
+- Frontend: TypeScript with Prettier formatting
+- Database: Use migrations for schema changes
+- API: Follow RESTful conventions and include proper error handling
 
 ## License
 
@@ -481,9 +656,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 For support, questions, or suggestions:
-- Email: support@sataxitracker.co.za
-- Issues: [GitHub Issues](https://github.com/your-org/sa-taxi-tracker/issues)
-- Documentation: [Wiki](https://github.com/your-org/sa-taxi-tracker/wiki)
+- Email: support@travelmate.co.za
+- Issues: [GitHub Issues](https://github.com/your-org/travel-mate/issues)
+- Documentation: [Wiki](https://github.com/your-org/travel-mate/wiki)
 
 ## Acknowledgments
 
@@ -494,4 +669,4 @@ For support, questions, or suggestions:
 
 ---
 
-**SA Taxi Solutions** - Transforming urban mobility through technology and community collaboration
+**Travel Mate** - Transforming urban mobility through technology and community collaboration
