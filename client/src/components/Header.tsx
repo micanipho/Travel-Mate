@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, User, LogOut } from "lucide-react";
+import { Menu, User, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
@@ -78,6 +78,14 @@ const Header = () => {
                     <a className="flex items-center gap-2 w-full">
                       <User className="h-4 w-4" />
                       Dashboard
+                    </a>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/profile">
+                    <a className="flex items-center gap-2 w-full">
+                      <Settings className="h-4 w-4" />
+                      Profile
                     </a>
                   </Link>
                 </DropdownMenuItem>

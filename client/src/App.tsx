@@ -9,6 +9,7 @@ import LoginPage from "@/pages/LoginPage";
 import LogoutPage from "@/pages/LogoutPage";
 import SignUpPage from "@/pages/SignUpPage";
 import Dashboard from "@/pages/Dashboard";
+import ProfilePage from "@/pages/ProfilePage";
 
 
 
@@ -24,6 +25,7 @@ function Router() {
             <Route path="/signup" component={SignUpPage} />
             <Route path="/logout" component={LogoutPage} />
             <Route path="/dashboard" component={Dashboard} />
+            <Route path="/profile" component={ProfilePage} />
           </Switch>
         </main>
         <Footer />

@@ -90,42 +90,51 @@ const Dashboard = () => {
     try {
       setLoading(true);
 
-      // Load destinations
-      try {
-        const destinationsResponse = await apiRequest("GET", "/api/destinations");
-        const destinationsData = await destinationsResponse.json();
-        setDestinations(destinationsData.destinations || destinationsData || []);
-      } catch (error) {
-        console.log('Destinations endpoint not available yet, using empty array');
-        setDestinations([]);
-      }
+      // Keep destinations empty for now
+      setDestinations([]);
 
-      // Load alerts
-      try {
-        const alertsResponse = await apiRequest("GET", "/api/alerts");
-        const alertsData = await alertsResponse.json();
-        setAlerts(alertsData.alerts || alertsData || []);
-      } catch (error) {
-        console.log('Alerts endpoint not available yet, using empty array');
-        setAlerts([]);
-      }
-
-      // Calculate stats
-      const unreadCount = alerts.filter((alert: AlertItem) => alert.status === 'unread').length;
-      setStats({
-        totalDestinations: destinations.length,
-        unreadAlerts: unreadCount,
-        recentActivity: 1 // For now, just show account creation
-      });
+      // Set empty alerts initially - we'll load them separately
+      setAlerts([]);
+      setStats({ totalDestinations: 0, unreadAlerts: 0, recentActivity: 1 });
 
     } catch (error) {
       console.error('Error loading dashboard data:', error);
-      // Don't show error toast for missing endpoints during development
       setDestinations([]);
       setAlerts([]);
       setStats({ totalDestinations: 0, unreadAlerts: 0, recentActivity: 1 });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Separate function to load alerts
+  const loadAlerts = async () => {
+    try {
+      console.log('🚨 Starting to load alerts...');
+      const alertsResponse = await apiRequest("GET", "/api/alerts?limit=20");
+      console.log('🚨 Got alerts response:', alertsResponse.status);
+
+      const alertsData = await alertsResponse.json();
+      console.log('🚨 Parsed alerts data:', alertsData);
+
+      if (alertsData.success && alertsData.alerts) {
+        console.log('🚨 Setting alerts:', alertsData.alerts.length);
+        setAlerts(alertsData.alerts);
+
+        // Update stats with real unread count
+        const unreadCount = alertsData.alerts.filter((alert: AlertItem) => alert.status === 'unread').length;
+        setStats(prev => ({
+          ...prev,
+          unreadAlerts: unreadCount
+        }));
+
+        console.log('✅ Alerts loaded successfully:', alertsData.alerts.length);
+      } else {
+        console.warn('🚨 Unexpected alerts response structure:', alertsData);
+      }
+    } catch (error) {
+      console.error('❌ Error loading alerts:', error);
+      // Keep empty alerts on error
     }
   };
 
@@ -220,6 +229,24 @@ const Dashboard = () => {
       loadDashboardData();
     }
   }, [isAuthenticated]);
+
+  // Load alerts separately after authentication
+  useEffect(() => {
+    console.log('🔄 Alerts useEffect triggered:', { isAuthenticated, loading });
+    if (isAuthenticated && !loading) {
+      console.log('🔄 Starting alerts timer...');
+      // Small delay to ensure dashboard is loaded first
+      const timer = setTimeout(() => {
+        console.log('🔄 Timer fired, calling loadAlerts...');
+        loadAlerts();
+      }, 100);
+
+      return () => {
+        console.log('🔄 Cleaning up alerts timer');
+        clearTimeout(timer);
+      };
+    }
+  }, [isAuthenticated, loading]);
 
   // Show loading while checking authentication
   if (isLoading) {

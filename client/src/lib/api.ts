@@ -116,6 +116,14 @@ export const userApi = {
     const response = await apiRequest("PUT", "/api/users/profile", userData);
     const data = await response.json();
     return data.user;
+  },
+
+  async updatePassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+    const response = await apiRequest("PUT", "/api/users/password", {
+      currentPassword,
+      newPassword
+    });
+    return await response.json();
   }
 };
 
