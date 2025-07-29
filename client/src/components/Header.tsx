@@ -4,16 +4,31 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { Menu, User, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [location] = useLocation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   const navLinks = [
-    { name: "Home", path: "/" }
-    
+    { name: "Home", path: "/" },
+    ...(isAuthenticated ? [{ name: "Dashboard", path: "/dashboard" }] : [])
   ];
+
+  const handleLogout = async () => {
+    await logout();
+    window.location.href = '/';
+  };
 
   return (
     <header className="fixed w-full bg-white shadow-md z-50">
@@ -46,16 +61,48 @@ const Header = () => {
         </nav>
         
         <div className="flex items-center gap-3">
-          <Link href="/login">
-            <Button variant="outline" className="hidden md:block border-2 border-primary text-primary font-semibold hover:bg-primary hover:text-white">
-              Login
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button className="bg-primary text-white font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 duration-300">
-              SignUp
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            // Authenticated user menu
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  <span className="hidden md:block">{user?.firstName || 'User'}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard">
+                    <a className="flex items-center gap-2 w-full">
+                      <User className="h-4 w-4" />
+                      Dashboard
+                    </a>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            // Guest user buttons
+            <>
+              <Link href="/login">
+                <Button variant="outline" className="hidden md:block border-2 border-primary text-primary font-semibold hover:bg-primary hover:text-white">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button className="bg-primary text-white font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 duration-300">
+                  SignUp
+                </Button>
+              </Link>
+            </>
+          )}
           
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>

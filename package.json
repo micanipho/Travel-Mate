@@ -5,10 +5,10 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "dev:backend": "tsx server/index.ts",
+    "dev:backend": "tsx server/server.js",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\"",
-    "build": "vite build && esbuild --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "set NODE_ENV=production && node dist/index.js",
+    "build": "vite build && cp -r server dist/ && cp server/.env dist/server/.env",
+    "start": "set NODE_ENV=production && cd dist/server && node server.js",
     "check": "tsc",
     "db:push": "dotenv -e .env -- drizzle-kit push"
   },
