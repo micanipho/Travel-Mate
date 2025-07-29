@@ -14,7 +14,8 @@ class AlertController {
       const result = await Alert.findByUserId(userId, page, limit, filters)
       res.json({
         success: true,
-        data: result
+        alerts: result.alerts,
+        pagination: result.pagination
       })
     } catch (error) {
       res.status(500).json({
