@@ -43,12 +43,12 @@ static async updateProfile(req, res) {
 
     // Check email uniqueness if being changed
     if (email) {
-      const shouldReturn = await this.checkEmailUniqueness.call(this, res, email, userId);
+      const shouldReturn = await UserController.checkEmailUniqueness(res, email, userId);
       if (shouldReturn) return;
     }
 
     // Prepare update data
-    const updateData = this.prepareUpdateData.call(this, {
+    const updateData = UserController.prepareUpdateData({
       firstName,
       lastName,
       email,
@@ -58,7 +58,7 @@ static async updateProfile(req, res) {
 
     const updatedUser = await User.updateProfile(userId, updateData);
 
-    this.sendSuccessResponse.call(this, res, updatedUser);
+    UserController.sendSuccessResponse(res, updatedUser);
   } catch (error) {
     console.error('Update profile error:', error);
     res.status(500).json({
