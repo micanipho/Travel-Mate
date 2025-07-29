@@ -4,13 +4,13 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
-    "dev:backend": "tsx server/server.js",
-    "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\"",
-    "build": "vite build && cp -r server dist/ && cp server/.env dist/server/.env",
-    "start": "set NODE_ENV=production && cd dist/server && node server.js",
-    "check": "tsc",
-    "db:push": "dotenv -e .env -- drizzle-kit push"
+    "dev": "../node_modules/.bin/vite",
+    "dev:backend": "../node_modules/.bin/tsx server/server.js",
+    "dev:all": "../node_modules/.bin/concurrently \"npm run dev\" \"npm run dev:backend\"",
+    "build": "../node_modules/.bin/vite build && cp -r server dist/ && cp server/.env dist/server/.env",
+    "start": "set NODE_ENV=production && cd ../dist/server && node server.js",
+    "check": "../node_modules/.bin/tsc",
+    "db:push": "../node_modules/.bin/dotenv -e .env -- drizzle-kit push"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
