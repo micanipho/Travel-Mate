@@ -157,7 +157,7 @@ describe('User Tests', () => {
       query.mockResolvedValueOnce({ rows: [] })
       // Mock User.create to return new user
       query.mockResolvedValueOnce({ rows: [mockUser] })
-      
+
       await AuthController.register(req, res)
 
       expect(res.status).toHaveBeenCalledWith(201)

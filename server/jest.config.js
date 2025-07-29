@@ -28,4 +28,4 @@ module.exports = {
   maxWorkers: 1,
   // Force exit after tests
   verbose: false
-};
+}

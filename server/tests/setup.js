@@ -74,7 +74,7 @@ global.testUtils = {
       json: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
       cookie: jest.fn().mockReturnThis(),
-      clearCookie: jest.fn().mockReturnThis(),
+      clearCookie: jest.fn().mockReturnThis()
     }
     return res
   },
@@ -131,7 +131,7 @@ const setupTestDatabase = async () => {
     })
 
     // Add timeout wrapper for database operations
-    const timeoutPromise = new Promise((_, reject) => {
+    const timeoutPromise = new Promise((_resolve, reject) => {
       setTimeout(() => reject(new Error('Database connection timeout')), 3000)
     })
 
@@ -335,7 +335,6 @@ afterAll(async () => {
     setTimeout(() => {
       process.exit(0)
     }, 100)
-
   } catch (error) {
     console.warn('Warning during cleanup:', error.message)
     // Force exit even on error
