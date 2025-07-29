@@ -56,6 +56,27 @@ I've implemented a comprehensive database seeding system for your Travel Mate ap
 - ✅ **Progress tracking** and error handling
 - ✅ **Summary reports** with data counts
 
+## Prerequisites
+
+### Environment Setup
+1. **Copy environment file**: Copy `.env.example` to `.env` and configure your database settings:
+   ```bash
+   cd server
+   cp .env.example .env
+   ```
+
+2. **Configure your database settings** in `.env`:
+   ```bash
+   # Edit the .env file with your database configuration
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=your_database_name
+   DB_USER=your_database_user
+   DB_PASSWORD=your_database_password
+   ```
+
+3. **Ensure PostgreSQL is running** and your database user exists
+
 ## How to Use
 
 ### Option 1: Using Node.js (Recommended)
@@ -67,35 +88,61 @@ cd server
 # Install dependencies (if not already done)
 npm install
 
-# Run database seeding
+# Step 1: Create the database (if not already created)
+npm run db:create
+
+# Step 2: Set up database permissions (required for first-time setup)
+# Replace DB_NAME and DB_USER with your actual values from .env file
+sudo -u postgres psql -d $DB_NAME -c "GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_USER;"
+sudo -u postgres psql -d $DB_NAME -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER;"
+sudo -u postgres psql -d $DB_NAME -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER;"
+sudo -u postgres psql -d $DB_NAME -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;"
+sudo -u postgres psql -d $DB_NAME -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;"
+
+# Step 3: Run database migrations
+npm run db:migrate
+
+# Step 4: Run database seeding
 npm run db:seed
 
-# Or run full database reset (drop + create + migrate + seed)
+# Alternative: Run full database reset (create + migrate + seed)
+# Note: You still need to run the permission commands above for first-time setup
 npm run db:reset
 ```
 
 ### Option 2: Manual PostgreSQL Execution
 
+**Prerequisites:** Ensure database permissions are set up (see Option 1 above)
+
 ```bash
+# Load environment variables (or manually replace $DB_NAME with your database name)
+source .env
+
 # Make the script executable
 chmod +x server/scripts/manual_seed.sh
 
 # Run the manual seeding script
 ./server/scripts/manual_seed.sh
 
-# Or execute individual files
-psql -d travel_mate -f server/seeds/001_users_seed.sql
-psql -d travel_mate -f server/seeds/002_destinations_seed.sql
-psql -d travel_mate -f server/seeds/003_alerts_seed.sql
-psql -d travel_mate -f server/seeds/004_additional_scenarios_seed.sql
+# Or execute individual files (replace $DB_NAME with your database name from .env)
+psql -d $DB_NAME -f server/seeds/001_users_seed.sql
+psql -d $DB_NAME -f server/seeds/002_destinations_seed.sql
+psql -d $DB_NAME -f server/seeds/003_alerts_seed.sql
+psql -d $DB_NAME -f server/seeds/004_additional_scenarios_seed.sql
 ```
 
 ### Option 3: Direct SQL Execution
 
+```bash
+# Connect to your database (replace with your database name from .env)
+psql -d $DB_NAME
+
+# Then run each file in order within the PostgreSQL prompt:
+```
+
 ```sql
--- Connect to your database and run each file in order
 \i server/seeds/001_users_seed.sql
-\i server/seeds/002_destinations_seed.sql  
+\i server/seeds/002_destinations_seed.sql
 \i server/seeds/003_alerts_seed.sql
 \i server/seeds/004_additional_scenarios_seed.sql
 ```
@@ -131,18 +178,23 @@ psql -d travel_mate -f server/seeds/004_additional_scenarios_seed.sql
 
 ### 1. Verify Data was Seeded
 ```sql
--- Check counts
-SELECT 'Users' as table_name, COUNT(*) as count FROM users
-UNION ALL
-SELECT 'Destinations', COUNT(*) FROM monitored_destinations  
-UNION ALL
-SELECT 'Alerts', COUNT(*) FROM alerts;
+-- Check counts (Expected results after successful seeding)
+SELECT 'Users' as table_name, COUNT(*) as count FROM users;
+-- Expected: 4 users
+
+SELECT 'Destinations' as table_name, COUNT(*) as count FROM monitored_destinations;
+-- Expected: 40 destinations
+
+SELECT 'Alerts' as table_name, COUNT(*) as count FROM alerts;
+-- Expected: 44 alerts
 
 -- Check alert status distribution
 SELECT status, COUNT(*) FROM alerts GROUP BY status;
+-- Expected: read: 22, unread: 22
 
--- Check risk level distribution  
-SELECT risk_level, COUNT(*) FROM monitored_destinations GROUP BY risk_level;
+-- Check risk level distribution
+SELECT risk_level, COUNT(*) FROM monitored_destinations GROUP BY risk_level ORDER BY risk_level;
+-- Expected: Level 1: 4, Level 2: 15, Level 3: 15, Level 4: 5, Level 5: 1
 ```
 
 ### 2. Test Authentication
@@ -188,8 +240,38 @@ INSERT INTO alerts (user_id, title, message, status, priority) VALUES
 ### Common Issues
 1. **"relation does not exist"** - Run migrations first: `npm run db:migrate`
 2. **"duplicate key value"** - Clear existing data or use `ON CONFLICT DO NOTHING`
-3. **"permission denied"** - Check database user permissions
+3. **"permission denied for schema public"** - Run the database permission commands shown in Option 1 above
 4. **"connection refused"** - Verify database is running and connection settings
+5. **"database does not exist"** - Run `npm run db:create` first
+
+### Database Permission Issues
+If you encounter permission errors, ensure your database user has the necessary privileges:
+
+```bash
+# Connect as postgres superuser and grant permissions
+# Replace DB_NAME and DB_USER with your values from .env file
+sudo -u postgres psql -d $DB_NAME
+
+# Run these commands in the PostgreSQL prompt (replace YOUR_DB_USER with your actual username):
+GRANT ALL PRIVILEGES ON SCHEMA public TO YOUR_DB_USER;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO YOUR_DB_USER;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO YOUR_DB_USER;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO YOUR_DB_USER;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO YOUR_DB_USER;
+
+# Exit PostgreSQL
+\q
+```
+
+### Environment Variable Reference
+Your `.env` file should contain these database-related variables:
+```bash
+DB_HOST=localhost          # Database host
+DB_PORT=5432              # Database port
+DB_NAME=your_database_name # Your database name
+DB_USER=your_username     # Your database username
+DB_PASSWORD=your_password # Your database password
+```
 
 ### Data Cleanup
 ```sql
@@ -199,9 +281,53 @@ DELETE FROM monitored_destinations;
 DELETE FROM users WHERE email LIKE '%example.com' OR email LIKE '%travelmate.com';
 ```
 
+## Quick Start (First Time Setup)
+
+For first-time setup, follow these steps in order:
+
+```bash
+# 1. Navigate to server directory
+cd server
+
+# 2. Set up environment configuration
+cp .env.example .env
+# Edit .env file with your database configuration
+
+# 3. Install dependencies
+npm install
+
+# 4. Create database
+npm run db:create
+
+# 5. Set up database permissions (replace with your actual values from .env)
+# Load your environment variables first
+source .env
+
+# Grant permissions (replace $DB_NAME and $DB_USER with actual values)
+sudo -u postgres psql -d $DB_NAME -c "GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_USER;"
+sudo -u postgres psql -d $DB_NAME -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER;"
+sudo -u postgres psql -d $DB_NAME -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER;"
+sudo -u postgres psql -d $DB_NAME -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;"
+sudo -u postgres psql -d $DB_NAME -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;"
+
+# 6. Run migrations
+npm run db:migrate
+
+# 7. Run seeding
+npm run db:seed
+
+# 8. Verify seeding was successful
+# You should see output showing:
+# - Users: 4
+# - Destinations: 40
+# - Alerts: 44
+# - Alert Status: read: 22, unread: 22
+# - Destinations by Risk Level: Level 1-5 distribution
+```
+
 ## Next Steps
 
-1. **Run the seeding** using your preferred method above
+1. **Run the seeding** using the Quick Start guide above for first-time setup
 2. **Test the API endpoints** with the seeded data
 3. **Customize the data** as needed for your specific use cases
 4. **Write tests** using the seeded data as fixtures
