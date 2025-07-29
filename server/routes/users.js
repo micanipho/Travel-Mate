@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
-const { validateProfileUpdate, validatePagination } = require('../middleware/validation');
+const { validateProfileUpdate, validatePasswordUpdate, validatePagination } = require('../middleware/validation');
 const { asyncHandler } = require('../middleware/errorHandler');
 const UserController = require('../controllers/UserController');
 
@@ -12,7 +12,7 @@ router.get('/profile', authenticateToken, asyncHandler(UserController.getProfile
 router.put('/profile', authenticateToken, validateProfileUpdate, asyncHandler(UserController.updateProfile));
 
 // PUT /api/users/password - Update password
-router.put('/password', authenticateToken, asyncHandler(UserController.updatePassword));
+router.put('/password', authenticateToken, validatePasswordUpdate, asyncHandler(UserController.updatePassword));
 
 // GET /api/users - Get all users (admin only)
 router.get('/', authenticateToken, validatePagination, asyncHandler(UserController.getAllUsers));
