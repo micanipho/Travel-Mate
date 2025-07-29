@@ -6,8 +6,8 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
-    --primary: 355 100% 70%; /* #FF6B6B */
-    --primary-light: 355 100% 80%; /* #FF9E9E */
+    --primary: 0 0% 19%; /* #FF6B6B */
+    --primary-light: 0 0% 6%; /* #FF9E9E */
     --primary-dark: 355 100% 67%; /* #FF4757 */
     --secondary: 173 59% 55%; /* #4ECDC4 */
     --yellow: 42 100% 70%; /* #FFD166 */
@@ -116,4 +116,7 @@
 
 .font-comic {
   font-family: 'Comic Neue', cursive;
+}
+button {
+  margin: 6px;
 }
