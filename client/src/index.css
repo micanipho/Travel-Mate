@@ -6,18 +6,18 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
-    --primary: 355 100% 70%; /* #FF6B6B */
+    --light: 34 100% 99%; /* #fffcf8 */
     --primary-light: 355 100% 80%; /* #FF9E9E */
     --primary-dark: 355 100% 67%; /* #FF4757 */
     --secondary: 173 59% 55%; /* #4ECDC4 */
-    --yellow: 42 100% 70%; /* #FFD166 */
+    --yellow: #333; /* #FFD166 */
     --purple: 257 83% 76%; /* #A78BFA */
     --pink: 333 90% 82%; /* #F9A8D4 */
     --blue: 188 66% 67%; /* #7ED6DF */
     --green: 134 54% 65%; /* #6BD475 */
     --black: 0 0% 0%; /* #000000 */
     --dark: 237 51% 33%; /* #2A2D7E */
-    --light: 96 100% 99%; /* #FDFFFC */
+    --primary: 35 100% 50%; /* #ff9500 */
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
