@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --primary: 0 0% 19%; /* #FF6B6B */
+    --primary-light: 0 0% 6%; /* #FF9E9E */
+    --primary-dark: 355 100% 67%; /* #FF4757 */
+    --secondary: 173 59% 55%; /* #4ECDC4 */
+    --yellow: 42 100% 70%; /* #FFD166 */
+    --purple: 257 83% 76%; /* #A78BFA */
+    --pink: 333 90% 82%; /* #F9A8D4 */
+    --blue: 188 66% 67%; /* #7ED6DF */
+    --green: 134 54% 65%; /* #6BD475 */
+    --black: 0 0% 0%; /* #000000 */
+    --dark: 237 51% 33%; /* #2A2D7E */
+    --light: 96 100% 99%; /* #FDFFFC */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 355 100% 70%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --primary: 355 100% 70%;
+    --primary-foreground: 211 100% 99%;
+    --secondary: 173 59% 55%;
+    --secondary-foreground: 0 0% 98%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 240 4.9% 83.9%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-nunito bg-background text-foreground antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-fredoka font-normal leading-tight text-[#2A2D7E];
+  }
+}
+
+@layer components {
+  .animated-gradient {
+    background: linear-gradient(270deg, hsl(var(--primary)), hsl(var(--purple)), hsl(var(--secondary)));
+    background-size: 600% 600%;
+    animation: gradientAnimation 8s ease infinite;
+  }
+
+  @keyframes gradientAnimation {
+    0% {background-position: 0% 50%}
+    50% {background-position: 100% 50%}
+    100% {background-position: 0% 50%}
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
+  }
+
+  .character-bubble {
+    @apply rounded-full flex flex-col items-center justify-center p-4 cursor-pointer transition-all hover:scale-110 shadow-lg mx-auto;
+  }
+}
+
+/* Font family utilities */
+.font-fredoka {
+  font-family: 'Fredoka', sans-serif;
+}
+
+.font-nunito {
+  font-family: 'Nunito', sans-serif;
+}
+
+.font-comic {
+  font-family: 'Comic Neue', cursive;
+}
+button {
+  margin: 6px;
+}
