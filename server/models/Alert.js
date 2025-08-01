@@ -12,7 +12,18 @@ class Alert {
       [userId, title, message, priority]
     )
 
-    return result.rows[0]
+    const alert = result.rows[0]
+    // Convert snake_case to camelCase for frontend
+    return {
+      id: alert.id,
+      title: alert.title,
+      message: alert.message,
+      status: alert.status,
+      priority: alert.priority,
+      createdAt: alert.created_at,
+      readAt: alert.read_at,
+      userId: alert.user_id
+    }
   }
 
   // Find alert by ID
@@ -24,7 +35,23 @@ class Alert {
        WHERE a.id = $1`,
       [id]
     )
-    return result.rows[0]
+    const alert = result.rows[0]
+    if (!alert) return null
+
+    // Convert snake_case to camelCase for frontend
+    return {
+      id: alert.id,
+      title: alert.title,
+      message: alert.message,
+      status: alert.status,
+      priority: alert.priority,
+      createdAt: alert.created_at,
+      readAt: alert.read_at,
+      userId: alert.user_id,
+      firstName: alert.first_name,
+      lastName: alert.last_name,
+      email: alert.email
+    }
   }
 
   // Find all alerts for a user
@@ -67,8 +94,20 @@ class Alert {
     )
     const total = parseInt(countResult.rows[0].count)
 
+    // Convert snake_case to camelCase for frontend
+    const alerts = result.rows.map(alert => ({
+      id: alert.id,
+      title: alert.title,
+      message: alert.message,
+      status: alert.status,
+      priority: alert.priority,
+      createdAt: alert.created_at,
+      readAt: alert.read_at,
+      userId: alert.user_id
+    }))
+
     return {
-      alerts: result.rows,
+      alerts,
       pagination: {
         page,
         limit,
@@ -142,37 +181,76 @@ class Alert {
   }
 
   // Find alert by ID for specific user
-  static async findById (id, userId) {
+  static async findByIdAndUserId (id, userId) {
     const result = await query(
       `SELECT * FROM alerts
        WHERE id = $1 AND user_id = $2`,
       [id, userId]
     )
-    return result.rows[0]
+    const alert = result.rows[0]
+    if (!alert) return null
+
+    // Convert snake_case to camelCase for frontend
+    return {
+      id: alert.id,
+      title: alert.title,
+      message: alert.message,
+      status: alert.status,
+      priority: alert.priority,
+      createdAt: alert.created_at,
+      readAt: alert.read_at,
+      userId: alert.user_id
+    }
   }
 
   // Mark alert as read
   static async markAsRead (id, userId) {
     const result = await query(
-      `UPDATE alerts 
+      `UPDATE alerts
        SET status = 'read', read_at = CURRENT_TIMESTAMP
        WHERE id = $1 AND user_id = $2
        RETURNING *`,
       [id, userId]
     )
-    return result.rows[0]
+    const alert = result.rows[0]
+    if (!alert) return null
+
+    // Convert snake_case to camelCase for frontend
+    return {
+      id: alert.id,
+      title: alert.title,
+      message: alert.message,
+      status: alert.status,
+      priority: alert.priority,
+      createdAt: alert.created_at,
+      readAt: alert.read_at,
+      userId: alert.user_id
+    }
   }
 
   // Mark alert as unread
   static async markAsUnread (id, userId) {
     const result = await query(
-      `UPDATE alerts 
+      `UPDATE alerts
        SET status = 'unread', read_at = NULL
        WHERE id = $1 AND user_id = $2
        RETURNING *`,
       [id, userId]
     )
-    return result.rows[0]
+    const alert = result.rows[0]
+    if (!alert) return null
+
+    // Convert snake_case to camelCase for frontend
+    return {
+      id: alert.id,
+      title: alert.title,
+      message: alert.message,
+      status: alert.status,
+      priority: alert.priority,
+      createdAt: alert.created_at,
+      readAt: alert.read_at,
+      userId: alert.user_id
+    }
   }
 
   // Delete alert

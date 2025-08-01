@@ -17,7 +17,7 @@ I've implemented a comprehensive database seeding system for your Travel Mate ap
 
 #### Users (`server/seeds/001_users_seed.sql`)
 - 4 sample users with different profiles
-- Default password: `password123` (bcrypt hashed)
+- Default password: `Password123` (bcrypt hashed)
 - Mix of notification preferences and languages
 
 #### Destinations (`server/seeds/002_destinations_seed.sql`)
@@ -152,10 +152,10 @@ psql -d $DB_NAME
 ### Users Created
 | Email | Name | Password | Language | Notifications |
 |-------|------|----------|----------|---------------|
-| john.doe@example.com | John Doe | password123 | English | Enabled |
-| jane.smith@example.com | Jane Smith | password123 | English | Enabled |
-| admin@travelmate.com | Admin User | password123 | English | Enabled |
-| test.user@example.com | Test User | password123 | Afrikaans | Disabled |
+| john.doe@example.com | John Doe | Password123 | English | Enabled |
+| jane.smith@example.com | Jane Smith | Password123 | English | Enabled |
+| admin@travelmate.com | Admin User | Password123 | English | Enabled |
+| test.user@example.com | Test User | Password123 | Afrikaans | Disabled |
 
 ### Destination Categories
 - **Major Cities** (8): Cape Town, Johannesburg, Durban, etc.
@@ -198,7 +198,7 @@ SELECT risk_level, COUNT(*) FROM monitored_destinations GROUP BY risk_level ORDE
 ```
 
 ### 2. Test Authentication
-- Login with any seeded user using password `password123`
+- Login with any seeded user using password `Password123`
 - Test different notification preferences
 
 ### 3. Test API Endpoints

@@ -97,17 +97,11 @@ class AlertController {
     // TODO: Implement get alert functionality
     try {
       const alertId = req.params.id
-      const alert = await Alert.findById(alertId)
+      const alert = await Alert.findByIdAndUserId(alertId, req.user.id)
       if (!alert) {
         return res.status(404).json({
           success: false,
           message: 'Alert not found'
-        })
-      }
-      if (alert.user_id !== req.user.id) {
-        return res.status(403).json({
-          success: false,
-          message: 'Access  denied'
         })
       }
       res.json({
