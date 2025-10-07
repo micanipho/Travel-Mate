@@ -32,7 +32,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed w-full bg-white shadow-md z-50">
+    <header className="fixed w-full bg-white z-50" style={{boxShadow: '0 5px 16px 5px #5555550f'}}>
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Link href="/">
