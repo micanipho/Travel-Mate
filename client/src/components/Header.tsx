@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, User, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import Logo from '@/assets/logo.svg'; 
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,7 +37,7 @@ const Header = () => {
         <div className="flex items-center gap-3">
           <Link href="/">
             <a className="flex items-center gap-3">
-              <span className="font-fredoka text-2xl bg-orange-500 text-white p-3 rounded-2xl">Travel Mate</span>
+              <img src={Logo} alt="" />
             </a>
           </Link>
         </div>

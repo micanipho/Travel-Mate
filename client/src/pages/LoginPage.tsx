@@ -63,17 +63,16 @@ const Login = () => {
   };
 
   return (
-    <section className="py-16 bg-orange-50 overflow-hidden relative ">
+    <section className="py-16 overflow-hidden relative " style={{backgroundColor:'#FFFCF8'}}>
       <div className="flex items-center justify-center container p-10 mx-auto px-4">
 
         <div className="flex items-center justify-center overflow-hidden w-[40vw] p-2 md:p-2">
 
           <div className="max-w-3xl mx-auto">
 
-            <h1 className="text-6xl font-bold text-gray-900 text-center">Travel Mate</h1>
-            <p className="text-2xl text-gray-500 text-center">Browse Taxi Ranks, Routes and
+            <h1 className="text-6xl font-bold text-gray-900 text-center mb-3 tracking-tight">TravelMate</h1>
+            <p className="text-[20px] text-gray-500 text-center mb-3">Browse Taxi Ranks, Routes and <br />
               staying safe with real-time Alerts</p>
-            <h2 className="font-fredoka mb-6 text-3xl text-primary text-center">Log in</h2>
             <div className="w-[90%] flex items-center self-center justify-self-center">
               <div className="flex-grow border-t border-gray-300"></div>
               <span className="px-4 text-gray-500 text-sm">Sign In</span>
@@ -114,7 +113,7 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-[90%] bg-primary text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-[100%] bg-primary text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>
@@ -126,28 +125,27 @@ const Login = () => {
                   )}
                 </button>
 
-                <div className="w-[90%] flex items-center my-4">
+                <div className="w-[90%] flex items-center">
                   <div className="flex-grow border-t border-gray-300"></div>
                   <span className="px-4 text-gray-500 text-sm">or</span>
                   <div className="flex-grow border-t border-gray-300"></div>
                 </div>
-                <div className='flex'>
+                <div className='flex gap-5'>
                   <button
                     type="button"
                     disabled={isSubmitting}
-                    className="w-[90%] bg-white text-gray-700 font-semibold py-2 px-4 rounded-md hover:bg-gray-100 transition duration-200 flex items-center justify-center border disabled:opacity-50"
+                    className="flex w-[60px] h-[40px] bg-white text-gray-700 font-semibold rounded-md hover:bg-gray-100 transition duration-200 flex items-center justify-center border disabled:opacity-50"
                   >
-                    <FcGoogle className="w-6 h-6" />
-                    <span className="ml-2"></span>
+                    <FcGoogle className="w-6 h-6 "/>
+                    
                   </button>
 
                   <button
                     type="button"
                     disabled={isSubmitting}
-                    className="w-[90%] bg-black text-white font-semibold py-2 px-4 rounded-md hover:bg-gray-800 transition duration-200 flex items-center justify-center disabled:opacity-50"
+                    className="flex w-[60px] h-[40px] bg-black text-white font-semibold rounded-md hover:bg-gray-800 transition duration-200 flex items-center justify-center disabled:opacity-50"
                   >
                     <FaApple className="w-6 h-6" />
-                    <span className="ml-2"></span>
                   </button>
                 </div>
 
