@@ -16,7 +16,7 @@ import ProfilePage from "@/pages/ProfilePage";
 function Router() {
   return (
     <AuthProvider>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen" style={{backgroundColor:'#FFFCF8'}}>
         <Header />
         <main className="flex-grow overflow-auto">
           <Switch>

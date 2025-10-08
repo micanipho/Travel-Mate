@@ -232,7 +232,7 @@ const Dashboard = () => {
         <meta name="description" content="Your Travel Mate dashboard for managing taxi routes and alerts." />
       </Helmet>
 
-      <div className="bg-orange-50 container mx-auto px-4 pt-24 pb-8 space-y-8">
+      <div className="container mx-auto px-4 pt-24 pb-8 space-y-8">
         <DashboardHeader
           userName={user?.firstName || 'User'}
           onAddDestination={() => setIsAddDestinationOpen(true)}
