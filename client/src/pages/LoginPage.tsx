@@ -66,7 +66,7 @@ const Login = () => {
     <section className="py-16 overflow-hidden relative " style={{backgroundColor:'#FFFCF8'}}>
       <div className="flex items-center justify-center container p-10 mx-auto px-4">
 
-        <div className="flex items-center justify-center overflow-hidden w-[40vw] p-2 md:p-2">
+        <div className="flex items-center justify-center overflow-hidden w-auto md:w-[40vw] lg:w-[40vw] p-2 md:p-2">
 
           <div className="max-w-3xl mx-auto">
 
