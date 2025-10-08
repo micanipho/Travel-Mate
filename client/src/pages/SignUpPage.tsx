@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { FcGoogle } from 'react-icons/fc';
@@ -72,11 +71,11 @@ const SignUpPage = () => {
   };
 
   return (
-    <section className="py-16 bg-orange-50 overflow-hidden relative">
+    <section className="py-16 overflow-hidden relative " style={{backgroundColor:'#FFFCF8'}}>
       <div className="flex items-center justify-center container p-10 mx-auto px-4">
         <div className="flex items-center justify-center overflow-hidden w-[40vw] h-[80vh] p-2 md:p-2">
           <div className="max-w-3xl mx-auto">
-            <h2 className="font-fredoka text-6xl mb-6 text-primary text-center">Sign Up</h2>
+            <h1 className="text-6xl font-bold text-gray-900 text-center mb-3 tracking-tight">Sign Up</h1>
 
             <p className="text-center p-4 text-gray-700 mb-4">
               Create a new account to get started! If you already have an account, you can{' '}
@@ -187,26 +186,28 @@ const SignUpPage = () => {
                     <div className="w-full border-t border-gray-300" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-orange-50 text-gray-500">Or continue with</span>
+                    <span className="px-2 text-gray-500" style={{backgroundColor:'#FFFCF8'}}>Or continue with</span>
                   </div>
                 </div>
+                  <div className='flex gap-5 justify-center'>
+                      <button
+                          type="button"
+                          disabled={isSubmitting}
+                          className="w-[60px] h-[40px] bg-white text-gray-700 font-semibold rounded-md hover:bg-gray-100 transition duration-200 flex items-center justify-center border disabled:opacity-50"
+                      >
+                          <FcGoogle className="w-6 h-6 "/>
 
-                <button
-                  type="button"
-                  className="w-full bg-white text-gray-700 font-semibold py-2 px-4 rounded-md hover:bg-gray-100 transition duration-200 flex items-center justify-center border"
-                >
-                  <FcGoogle className="w-6 h-6" />
-                  <span className="ml-2">Sign up with Google</span>
-                </button>
+                      </button>
 
-                <button
-                  type="button"
-                  className="w-full bg-black text-white font-semibold py-2 px-4 rounded-md hover:bg-gray-800 transition duration-200 flex items-center justify-center"
-                >
-                  <FaApple className="w-6 h-6" />
-                  <span className="ml-2">Sign up with Apple</span>
-                </button>
-              </div>
+                      <button
+                          type="button"
+                          disabled={isSubmitting}
+                          className="w-[60px] h-[40px] bg-black text-white font-semibold rounded-md hover:bg-gray-800 transition duration-200 flex items-center justify-center disabled:opacity-50"
+                      >
+                          <FaApple className="w-6 h-6" />
+                      </button>
+                  </div>
+                </div>
 
               <p className="text-gray-700 mt-2 text-sm text-center">
                 Already have an account?{' '}
