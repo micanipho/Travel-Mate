@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { FcGoogle } from 'react-icons/fc';
@@ -154,6 +153,9 @@ const Login = () => {
               <p className="text-gray-700 mt-2 text-sm text-center">
                 If you have forgotten your password, you can reset it by clicking
                 <a href="/reset-password" className="text-primary hover:underline"> here</a>.
+              </p>
+              <p className="text-gray-700 mt-2 text-sm text-center">
+                Don't have an account? <a href="/signup" className="text-primary hover:underline" rel="noopener noreferrer">sign up</a>
               </p>
             </form>
 

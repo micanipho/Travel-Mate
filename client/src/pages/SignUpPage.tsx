@@ -78,7 +78,7 @@ const SignUpPage = () => {
 
           <p className="text-center text-gray-700 mb-6">
             Create a new account to get started! If you already have an account, you can{' '}
-            <a href="/login" className="text-primary hover:underline">sign in</a>.
+            <a href="/login" className="text-primary hover:underline" rel="noopener noreferrer">sign in</a>.
           </p>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -209,7 +209,7 @@ const SignUpPage = () => {
 
             <p className="text-gray-700 mt-4 text-sm text-center">
               Already have an account?{' '}
-              <a href="/login" className="text-primary hover:underline">Sign in here</a>.
+              <a href="/login" className="text-primary hover:underline" rel="noopener noreferrer">Sign in here</a>.
             </p>
           </form>
         </div>
