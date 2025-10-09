@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import path from "path";
+import { resolve } from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 export default defineConfig({
@@ -18,16 +18,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "src"),
-      "@assets": path.resolve(import.meta.dirname, "..", "attached_assets"),
+      "@": resolve(__dirname, "src"),
+      "@assets": resolve(__dirname, "..", "attached_assets"),
     },
   },
-  root: path.resolve(import.meta.dirname),
+  root: resolve(__dirname),
   build: {
-    outDir: path.resolve(import.meta.dirname, "..", "dist/public"),
+    outDir: resolve(__dirname, "..", "dist/public"),
     emptyOutDir: true,
-  },
-  server: {
-    historyApiFallback: true, // Ensures all routes fallback to index.html
   },
 });

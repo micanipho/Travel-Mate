@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
 import { useAuth } from '@/contexts/AuthContext';
@@ -155,7 +155,7 @@ const Login = () => {
                 <a href="/reset-password" className="text-primary hover:underline"> here</a>.
               </p>
               <p className="text-gray-700 mt-2 text-sm text-center">
-                Don't have an account? <a href="/signup" className="text-primary hover:underline" rel="noopener noreferrer">sign up</a>
+                Don't have an account? <Link href="/signup" className="text-primary hover:underline" rel="noopener noreferrer">sign up</Link>
               </p>
             </form>
 

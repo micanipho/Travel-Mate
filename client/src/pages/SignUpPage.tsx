@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
 import { useAuth } from '@/contexts/AuthContext';
@@ -78,7 +78,7 @@ const SignUpPage = () => {
 
           <p className="text-center text-gray-700 mb-6">
             Create a new account to get started! If you already have an account, you can{' '}
-            <a href="/login" className="text-primary hover:underline" rel="noopener noreferrer">sign in</a>.
+            <Link href="/login" className="text-primary hover:underline" rel="noopener noreferrer">sign in</Link>.
           </p>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -209,7 +209,7 @@ const SignUpPage = () => {
 
             <p className="text-gray-700 mt-4 text-sm text-center">
               Already have an account?{' '}
-              <a href="/login" className="text-primary hover:underline" rel="noopener noreferrer">Sign in here</a>.
+              <Link href="/login" className="text-primary hover:underline" rel="noopener noreferrer">Sign in here</Link>.
             </p>
           </form>
         </div>
