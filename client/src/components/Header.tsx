@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, User, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import Logo from '@/assets/logo.svg'; 
+import Logo from '@/assets/logo.svg';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +32,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed w-full bg-white z-50" style={{boxShadow: '0 5px 16px 5px #5555550f'}}>
+    <header className="fixed w-full bg-white z-50" style={{ boxShadow: '0 5px 16px 5px #5555550f' }}>
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Link href="/">
@@ -41,11 +41,11 @@ const Header = () => {
             </a>
           </Link>
         </div>
-        
+
         <nav className="hidden md:flex space-x-6">
           {navLinks.map((link) => (
             <Link key={link.path} href={link.path}>
-              <a 
+              <a
                 className={cn(
                   "font-semibold transition-colors relative group",
                   location === link.path ? "text-primary" : "hover:text-primary"
@@ -60,7 +60,7 @@ const Header = () => {
             </Link>
           ))}
         </nav>
-        
+
         <div className="flex items-center gap-3">
           {isAuthenticated ? (
             // Authenticated user menu
@@ -106,36 +106,40 @@ const Header = () => {
                 </Button>
               </Link>
               <Link href="/signup">
-                <Button className="bg-primary text-white font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 duration-300">
+                <Button className="hidden md:block bg-primary text-white font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 duration-300">
                   SignUp
                 </Button>
               </Link>
             </>
           )}
-          
+
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-6 w-6" />
+            <SheetTrigger asChild  >
+              <Button variant="ghost" size="icon" className="md:hidden" >
+                <Menu  className="text-[#a58100]" style={{width:'2rem',height:'2rem'}}/>
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[250px] sm:w-[300px]">
               <nav className="flex flex-col gap-4 mt-8">
                 {navLinks.map((link) => (
-                  <Link key={link.path} href={link.path}>
-                    <a
-                      className={cn(
-                        "font-semibold py-2 px-4 rounded-lg transition-colors",
-                        location === link.path 
-                          ? "bg-primary/10 text-primary" 
-                          : "hover:bg-primary/5 hover:text-primary"
-                      )}
-                      onClick={() => setIsSheetOpen(false)}
-                    >
-                      {link.name}
-                    </a>
+                  <Link key={link.path} href={link.path}
+                    className="font-semibold px-4 rounded-lg transition-colors"
+                    onClick={() => setIsSheetOpen(false)}>
+                    {link.name}
                   </Link>
                 ))}
+                <Link href="/login" onClick={() => setIsSheetOpen(false)}
+                  className="font-semibold  px-4 rounded-lg transition-colors"
+                  hidden={isAuthenticated}
+                >
+                  Login
+                </Link>
+                <Link href="/signup" onClick={() => setIsSheetOpen(false)}
+                  className="font-semibold  px-4 rounded-lg transition-colors"
+                  hidden={isAuthenticated}
+                >
+                  Sign Up
+                </Link>
               </nav>
             </SheetContent>
           </Sheet>
