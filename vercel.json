@@ -3,7 +3,7 @@
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": null,
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- client/ package.json package-lock.json || exit 0",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- client/ package.json package-lock.json && exit 1 || exit 0",
   "git": {
     "deploymentEnabled": {
       "main": true
@@ -14,4 +14,3 @@
     "autoAlias": false
   }
 }
-
