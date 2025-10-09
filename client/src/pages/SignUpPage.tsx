@@ -69,6 +69,7 @@ const SignUpPage = () => {
     }
   };
 
+
   return (
     <section className="py-16 overflow-hidden relative bg-[#FFFCF8]">
       <div className="flex flex-col items-center justify-center container mx-auto px-4 sm:px-6 lg:px-8">
