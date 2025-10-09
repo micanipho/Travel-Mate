@@ -27,4 +27,7 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, "..", "dist/public"),
     emptyOutDir: true,
   },
+  server: {
+    historyApiFallback: true, // Ensures all routes fallback to index.html
+  },
 });
