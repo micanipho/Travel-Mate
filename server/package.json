@@ -11,11 +11,11 @@
     "test:integration": "jest --testPathPattern=tests/integration",
     "test:e2e": "jest --testPathPattern=tests/e2e",
     "test:coverage": "jest --coverage",
-    "db:create": "node scripts/createDatabase.js",
     "db:migrate": "node scripts/migrate.js",
     "db:rollback": "node scripts/rollback.js",
     "db:seed": "node scripts/seed.js",
-    "db:reset": "npm run db:create && npm run db:migrate && npm run db:seed",
+    "db:reset": "npm run db:migrate && npm run db:seed",
+    "db:setup": "npm run db:migrate && npm run db:seed",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

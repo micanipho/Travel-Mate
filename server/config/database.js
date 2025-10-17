@@ -2,26 +2,46 @@ const { Pool } = require('pg')
 const path = require('path')
 require('dotenv').config({ path: path.join(__dirname, '../.env') })
 
-// Database configuration
+// Supabase database configuration
+// Supports both direct connection and pooler connection
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'travel_mate',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '',
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? {
+    rejectUnauthorized: false
+  } : false,
+  // Force IPv4 to avoid IPv6 connectivity issues
+  host: process.env.DATABASE_URL ? undefined : process.env.DB_HOST,
+  // Connection pool settings
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000, // How long a client is allowed to remain idle
-  connectionTimeoutMillis: 2000 // How long to wait for a connection
+  connectionTimeoutMillis: 10000, // How long to wait for a connection (increased for cloud)
+  // Force IPv4 by setting the family option
+  ...(process.env.DATABASE_URL && {
+    connectionString: process.env.DATABASE_URL,
+    // Parse connection string and force IPv4
+    options: '-c statement_timeout=10000'
+  })
 }
 
-// Create connection pool
+// Override DNS resolution to prefer IPv4
+const dns = require('dns')
+dns.setDefaultResultOrder('ipv4first')
+
+// Create connection pool for Supabase
 const pool = new Pool(dbConfig)
+
+// Handle pool errors
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err)
+})
 
 // Database connection function
 const connectDB = async () => {
   try {
     const client = await pool.connect()
-    console.log('PostgreSQL connected successfully')
+    console.log('Supabase PostgreSQL connected successfully')
+    const result = await client.query('SELECT version()')
+    console.log('Database version:', result.rows[0].version)
     client.release()
     return true
   } catch (error) {
@@ -49,7 +69,11 @@ const query = async (text, params) => {
   try {
     const result = await pool.query(text, params)
     const duration = Date.now() - start
-    console.log('Executed query', { text, duration, rows: result.rowCount })
+
+    if (process.env.LOG_LEVEL === 'debug') {
+      console.log('Executed query', { text, duration, rows: result.rowCount })
+    }
+
     return result
   } catch (error) {
     console.error('Database query error:', error.message)
@@ -57,7 +81,7 @@ const query = async (text, params) => {
   }
 }
 
-// Transaction function
+// Transaction helper function
 const transaction = async (callback) => {
   const client = await pool.connect()
   try {
@@ -67,6 +91,7 @@ const transaction = async (callback) => {
     return result
   } catch (error) {
     await client.query('ROLLBACK')
+    console.error('Transaction error:', error.message)
     throw error
   } finally {
     client.release()
@@ -77,9 +102,10 @@ const transaction = async (callback) => {
 const closePool = async () => {
   try {
     await pool.end()
-    console.log('Database pool closed')
+    console.log('Database pool closed successfully')
   } catch (error) {
     console.error('Error closing database pool:', error.message)
+    throw error
   }
 }
 

@@ -64,7 +64,7 @@ Our community-driven approach leverages user-generated data to provide:
 ### Backend
 - **Runtime**: Node.js (v22+)
 - **Framework**: Express.js
-- **Database**: PostgreSQL with raw SQL queries
+- **Database**: Supabase (PostgreSQL) - Cloud-hosted
 - **Authentication**: JWT with bcryptjs
 - **Validation**: Express Validator
 - **Security**: Helmet, CORS, Rate Limiting
@@ -81,15 +81,23 @@ cd travel-mate
 npm install
 cd server && npm install && cd ..
 
-# 2. Set up database (PostgreSQL must be installed)
-createdb travel_mate_db
+# 2. Set up Supabase database
+# - Create a Supabase account at https://supabase.com
+# - Create a new project
+# - Get your connection string from Project Settings > Database
+# See SUPABASE_SETUP.md for detailed instructions
+
+# 3. Configure environment
 cd server
 cp .env.example .env
-# Edit .env with your database credentials
+# Edit .env with your Supabase connection string
+# DATABASE_URL=postgresql://postgres.[PROJECT-REF]:[PASSWORD]@...
+
+# 4. Run migrations and seed data
 npm run db:migrate
 npm run db:seed
 
-# 3. Start development servers
+# 5. Start development servers
 cd ..
 npm run dev:all
 ```
@@ -102,138 +110,39 @@ Visit `http://localhost:5173` for the frontend and `http://localhost:3000/api/he
 
 - Node.js (v22 or higher)
 - npm (v10 or higher)
-- PostgreSQL (v12 or higher)
+- Supabase account (free tier available)
 - Git
 
-### PostgreSQL Installation
+### Supabase Setup
 
-#### Ubuntu/Debian Systems
+**Travel Mate now uses Supabase** - a cloud-hosted PostgreSQL database. No local PostgreSQL installation required!
 
-1. **Update package list**
-```bash
-sudo apt update
-```
+#### Benefits
+- ✅ No local database installation needed
+- ✅ Cloud-hosted with automatic backups
+- ✅ Free tier: 500MB database, 2GB bandwidth/month
+- ✅ Built-in dashboard for data management
+- ✅ SSL security by default
 
-2. **Install PostgreSQL and additional utilities**
-```bash
-sudo apt install postgresql postgresql-contrib -y
-```
+#### Quick Setup
 
-3. **Start and enable PostgreSQL service**
-```bash
-# Start the service
-sudo systemctl start postgresql
+1. **Create a Supabase account**
+   - Go to [https://supabase.com](https://supabase.com)
+   - Sign up with GitHub, Google, or email
 
-# Enable auto-start on boot
-sudo systemctl enable postgresql
-```
+2. **Create a new project**
+   - Click "New Project"
+   - Name: `travel-mate`
+   - Choose a strong database password (save it!)
+   - Select your region
+   - Click "Create new project"
 
-4. **Verify installation**
-```bash
-# Check service status
-sudo systemctl status postgresql
+3. **Get your connection string**
+   - Go to Project Settings → Database
+   - Copy the "Connection string" (with connection pooling recommended)
+   - Replace `[YOUR-PASSWORD]` with your database password
 
-# Check PostgreSQL version
-psql --version
-
-# Test database connection
-sudo -u postgres psql -c "SELECT version();"
-```
-
-#### macOS Systems
-
-1. **Using Homebrew (recommended)**
-```bash
-# Install Homebrew if not already installed
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Install PostgreSQL
-brew install postgresql@16
-
-# Start PostgreSQL service
-brew services start postgresql@16
-```
-
-2. **Using PostgreSQL.app**
-- Download from [PostgreSQL.app](https://postgresapp.com/)
-- Install and launch the application
-- Add PostgreSQL to your PATH in `~/.zshrc` or `~/.bash_profile`:
-```bash
-export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
-```
-
-#### Windows Systems
-
-1. **Download PostgreSQL installer**
-- Visit [PostgreSQL Downloads](https://www.postgresql.org/download/windows/)
-- Download the installer for your Windows version
-
-2. **Run the installer**
-- Follow the installation wizard
-- Remember the password you set for the `postgres` user
-- Default port is 5432 (keep this unless you have conflicts)
-
-3. **Verify installation**
-- Open Command Prompt or PowerShell
-- Run: `psql --version`
-
-#### Post-Installation Setup
-
-1. **Create a database user for development**
-```bash
-# Switch to postgres user and create a new user
-sudo -u postgres createuser --interactive --pwprompt your_username
-
-# Or create user with specific privileges
-sudo -u postgres psql -c "CREATE USER your_username WITH PASSWORD 'your_password' CREATEDB;"
-```
-
-2. **Create the project database**
-```bash
-# Create database for the project
-sudo -u postgres createdb travel_mate_db
-
-# Or create with specific owner
-sudo -u postgres createdb -O your_username travel_mate_db
-```
-
-3. **Set up authentication (Ubuntu/Debian)**
-```bash
-# Edit PostgreSQL configuration (optional)
-sudo nano /etc/postgresql/16/main/pg_hba.conf
-
-# Change authentication method if needed (for development)
-# Find the line: local   all             all                                     peer
-# Change to:     local   all             all                                     md5
-```
-
-4. **Restart PostgreSQL after configuration changes**
-```bash
-sudo systemctl restart postgresql
-```
-
-#### Troubleshooting
-
-**Connection Issues:**
-```bash
-# Check if PostgreSQL is running
-sudo systemctl status postgresql
-
-# Check PostgreSQL logs
-sudo tail -f /var/log/postgresql/postgresql-16-main.log
-
-# Test connection with specific user
-psql -U your_username -h localhost -d travel_mate_db
-```
-
-**Permission Issues:**
-```bash
-# Reset postgres user password
-sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'new_password';"
-
-# Grant privileges to your user
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE travel_mate_db TO your_username;"
-```
+**📖 For detailed setup instructions, see [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)**
 
 ### Installation
 
@@ -256,39 +165,32 @@ cd ..
 
 3. Database Setup
 
-**Note:** Make sure PostgreSQL is installed and running (see [PostgreSQL Installation](#postgresql-installation) section above).
+**No local PostgreSQL installation required!** The project uses Supabase.
 
 ```bash
-# Create PostgreSQL database (if not created during PostgreSQL setup)
-createdb travel_mate_db
-
-# Or using psql
-psql -U postgres -c "CREATE DATABASE travel_mate_db;"
-
-# Navigate to server directory for database operations
+# Navigate to server directory
 cd server
+
+# Configure your Supabase connection
+cp .env.example .env
+# Edit .env and add your Supabase connection string:
+# DATABASE_URL=postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
 
 # Run database migrations
 npm run db:migrate
 
-# Seed with sample data
+# Seed with sample data (optional)
 npm run db:seed
 ```
 
 4. Environment Setup
 ```bash
-# Create environment file in server directory
-cd server
-cp .env.example .env
-
-# Configure your PostgreSQL connection in server/.env
-DATABASE_URL=postgresql://username:password@localhost:5432/travel_mate_db
+# Edit server/.env with your configuration
+DATABASE_URL=your_supabase_connection_string
 JWT_SECRET=your_jwt_secret_here
 PORT=3000
 NODE_ENV=development
-
-# Example with default postgres user:
-# DATABASE_URL=postgresql://postgres:your_password@localhost:5432/travel_mate_db
+CORS_ORIGIN=http://localhost:5173
 ```
 
 5. Start the application
@@ -517,13 +419,15 @@ GET    /api/health                 # Health check endpoint
 # Navigate to server directory first
 cd server
 
-# Database operations
-npm run db:create     # Create database
-npm run db:migrate    # Run migrations
+# Database operations (all work with Supabase)
+npm run db:migrate    # Run migrations to create tables
 npm run db:rollback   # Rollback last migration
 npm run db:seed       # Seed sample data
-npm run db:reset      # Reset database (create + migrate + seed)
+npm run db:reset      # Reset database (migrate + seed)
+npm run db:setup      # Full setup (same as reset)
 ```
+
+**Note**: No `db:create` needed - your Supabase database is already created!
 
 ### Development Commands
 ```bash
@@ -556,10 +460,15 @@ Required environment variables for production:
 **Server (.env in server directory):**
 ```
 NODE_ENV=production
-DATABASE_URL=postgresql://user:password@host:port/database
+DATABASE_URL=your_supabase_connection_string
 JWT_SECRET=your-super-secure-jwt-secret
 PORT=3000
+CORS_ORIGIN=https://your-production-domain.com
 ```
+
+**Supabase Connection String**:
+- Use the connection pooling URL (port 6543) for production
+- Format: `postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres`
 
 ### Docker Support
 ```bash
@@ -634,14 +543,15 @@ We welcome contributions from the community!
 ### Development Setup
 1. Fork the repository
 2. Follow the [Quick Start](#quick-start) guide
-3. Create a feature branch: `git checkout -b feature/your-feature-name`
-4. Make your changes
-5. Add tests for new functionality (backend tests in `server/tests/`)
-6. Ensure all tests pass: `cd server && npm test`
-7. Ensure code follows style guidelines: `npm run lint`
-8. Commit your changes: `git commit -m "Add your feature"`
-9. Push to your fork: `git push origin feature/your-feature-name`
-10. Submit a pull request
+3. Set up your own Supabase project for development (free tier available)
+4. Create a feature branch: `git checkout -b feature/your-feature-name`
+5. Make your changes
+6. Add tests for new functionality (backend tests in `server/tests/`)
+7. Ensure all tests pass: `cd server && npm test`
+8. Ensure code follows style guidelines: `npm run lint`
+9. Commit your changes: `git commit -m "Add your feature"`
+10. Push to your fork: `git push origin feature/your-feature-name`
+11. Submit a pull request
 
 ### Code Style
 - Backend: Follow ESLint configuration in `server/.eslintrc.js`
@@ -666,6 +576,7 @@ For support, questions, or suggestions:
 - Community contributors and beta testers
 - Local transportation authorities
 - Open source contributors
+- Supabase for providing excellent cloud database infrastructure
 
 ---
 
