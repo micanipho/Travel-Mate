@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "client/build",
+  "outputDirectory": "dist/public",
   "installCommand": "npm install",
   "framework": "vite",
   "git": {
@@ -19,7 +19,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "client/build/$1"
+      "dest": "dist/public/$1"
     }
   ]
 }
