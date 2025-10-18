@@ -12,7 +12,7 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined
 ): Promise<Response> {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://your-supabase-project-url.supabase.co";
   const fullUrl = `${baseUrl}${url}`;
 
   const headers: Record<string, string> = {};
@@ -44,7 +44,7 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://your-supabase-project-url.supabase.co";
     const url = queryKey[0] as string;
     const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
 
