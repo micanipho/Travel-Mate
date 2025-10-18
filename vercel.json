@@ -1,8 +1,8 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/public",
+  "outputDirectory": "client/dist",
   "installCommand": "npm install",
-  "framework": null,
+  "framework": "vite",
   "ignoreCommand": "git diff --quiet HEAD^ HEAD -- client/ server/ package.json package-lock.json && exit 1 || exit 0",
   "git": {
     "deploymentEnabled": {
@@ -12,5 +12,20 @@
   "github": {
     "silent": true,
     "autoAlias": false
-  }
+  },
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "client/dist/$1"
+    }
+  ]
 }
