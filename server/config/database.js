@@ -6,15 +6,17 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') })
 // Supports both direct connection and pooler connection
 const dbConfig = {
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? {
-    rejectUnauthorized: false
-  } : false,
+  ssl: process.env.NODE_ENV === 'production'
+    ? {
+        rejectUnauthorized: false
+      }
+    : false,
   // Force IPv4 to avoid IPv6 connectivity issues
   host: process.env.DATABASE_URL ? undefined : process.env.DB_HOST,
   // Connection pool settings
   max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000, // How long a client is allowed to remain idle
-  connectionTimeoutMillis: 10000, // How long to wait for a connection (increased for cloud)
+  idleTimeoutMillis: 60000, // Allow idle clients to remain for 60 seconds
+  connectionTimeoutMillis: 20000, // Wait up to 20 seconds for a connection
   // Force IPv4 by setting the family option
   ...(process.env.DATABASE_URL && {
     connectionString: process.env.DATABASE_URL,

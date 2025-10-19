@@ -1,9 +1,10 @@
 // Quick test script to verify Supabase connection
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + '/.env' });
 const { Pool } = require('pg');
 
 console.log('Testing Supabase connection...');
 console.log('Connection string (masked):', process.env.DATABASE_URL?.replace(/:[^:@]+@/, ':****@'));
+console.log('Loaded DATABASE_URL:', process.env.DATABASE_URL);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -42,4 +43,3 @@ async function testConnection() {
 }
 
 testConnection();
-

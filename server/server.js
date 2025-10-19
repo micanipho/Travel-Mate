@@ -39,24 +39,9 @@ app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 
 // Health check endpoint
-app.get('/api/health', async (req, res) => {
-  try {
-    const dbStatus = await healthCheck()
-    res.status(200).json({
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      database: dbStatus ? 'Connected' : 'Disconnected',
-      version: '1.0.0'
-    })
-  } catch (error) {
-    res.status(500).json({
-      status: 'ERROR',
-      timestamp: new Date().toISOString(),
-      database: 'Error',
-      error: error.message
-    })
-  }
-})
+app.get('/api/health', (req, res) => {
+  res.status(200).send('OK');
+});
 
 // API Routes
 app.use('/api/auth', authRoutes)
